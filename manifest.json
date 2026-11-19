@@ -1,0 +1,15 @@
+{
+ "name": "Gemini Flash Multi-Thread PWA",
+ "short_name": "Gemini PWA",
+ "start_url": "./index.html",
+ "display": "standalone",
+ "background_color": "#f9fafb",
+ "theme_color": "#111827",
+ "icons": [
+ {
+ "src": "icon.png",
+ "sizes": "512x512",
+ "type": "image/png"
+ }
+ ]
+}
