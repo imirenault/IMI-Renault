@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>IMI Agent | Automotive Intelligence</title>
+  <title>India Market Intelligence | IMI</title>
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#0f172a" />
+  <meta name="theme-color" content="#ffffff" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
   <!-- App Icons & Favicon -->
   <link rel="icon" type="image/png" href="icon.png" />
@@ -19,242 +19,351 @@
 
   <style>
     :root {
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --bg-dark: #0f172a;
-      --surface-dark: #1e293b;
-      --border-dark: #334155;
+      --bg-app: #ffffff;
+      --sidebar-bg: #f8fafc;
+      --sidebar-border: #e2e8f0;
       --text-main: #0f172a;
       --text-muted: #64748b;
-      --bg-light: #f8fafc;
+      --primary: #000000;
+      --primary-accent: #2563eb;
       --card-bg: #ffffff;
-      --accent-green: #10b981;
+      --chip-bg: #ffffff;
+      --border-color: #e2e8f0;
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: "Segoe UI Variable Text", "Segoe UI Variable Display", "Segoe UI", -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Roboto", "Helvetica Neue", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       margin: 0;
       display: flex;
       height: 100dvh;
-      background: var(--bg-light);
+      background: var(--bg-app);
       color: var(--text-main);
       overflow: hidden;
     }
 
-    /* Sidebar */
+    button, input, textarea, select {
+      font-family: inherit;
+    }
+
+    /* Copilot Sidebar */
     #sidebar {
-      width: 280px;
-      background: var(--bg-dark);
-      color: #f1f5f9;
+      width: 270px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--sidebar-border);
       display: flex;
       flex-direction: column;
-      padding: 1rem 0.75rem;
+      padding: 0.85rem 0.75rem;
       transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 30;
-      border-right: 1px solid var(--border-dark);
+      z-index: 40;
     }
-    .brand {
+    .sidebar-header {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      padding: 0.25rem 0.5rem 1rem 0.5rem;
-      border-bottom: 1px solid var(--border-dark);
-      margin-bottom: 0.75rem;
+      justify-content: space-between;
+      padding: 0.25rem 0.5rem 0.85rem 0.5rem;
     }
-    .brand-logo-container {
-      width: 40px;
-      height: 40px;
-      background: #ffffff;
-      border-radius: 8px;
+    .copilot-brand {
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 4px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
-      flex-shrink: 0;
-    }
-    .brand-logo-img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-    .brand-title {
-      font-size: 1.05rem;
-      font-weight: 700;
+      gap: 0.55rem;
+      font-family: "Segoe UI Variable Display", "Segoe UI Variable Text", "Segoe UI", sans-serif;
+      font-weight: 600;
+      font-size: 1.15rem;
+      color: #0f172a;
       letter-spacing: -0.01em;
-      color: #ffffff;
     }
-    .brand-subtitle {
-      font-size: 0.72rem;
-      color: #94a3b8;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+    .copilot-brand-icon {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
     }
 
     #newChatBtn {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      padding: 0.75rem;
-      border-radius: 8px;
-      font-weight: 600;
+      background: #f1f5f9;
+      color: #0f172a;
+      border: 1px solid #e2e8f0;
+      padding: 0.55rem 1rem;
+      border-radius: 20px;
+      font-weight: 500;
+      font-size: 0.88rem;
       cursor: pointer;
-      margin-bottom: 0.75rem;
-      width: 100%;
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 0.5rem;
-      transition: background 0.15s;
+      margin-bottom: 0.85rem;
+      transition: all 0.15s ease;
+      width: 100%;
     }
-    #newChatBtn:hover { background: var(--primary-hover); }
+    #newChatBtn:hover {
+      background: #e2e8f0;
+    }
 
-    #threadList { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.35rem; }
+    .chats-section-title {
+      font-size: 0.74rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      padding: 0.25rem 0.65rem;
+      margin-bottom: 0.25rem;
+    }
+
+    #threadList {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
     .thread-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.65rem 0.75rem;
-      border-radius: 6px;
+      padding: 0.5rem 0.65rem;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 0.88rem;
-      color: #cbd5e1;
+      font-size: 0.85rem;
+      color: #475569;
       transition: background 0.15s;
     }
-    .thread-item:hover { background: var(--surface-dark); color: #fff; }
-    .thread-item.active { background: #334155; color: #fff; font-weight: 600; }
+    .thread-item:hover { background: #e2e8f0; color: #0f172a; }
+    .thread-item.active { background: #e2e8f0; color: #0f172a; font-weight: 600; }
     .thread-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
     .del-btn {
       background: transparent;
       border: none;
-      color: #64748b;
+      color: #94a3b8;
       cursor: pointer;
-      font-size: 1.1rem;
+      font-size: 1rem;
       padding: 0 4px;
-      line-height: 1;
     }
-    .del-btn:hover { color: #f87171; }
+    .del-btn:hover { color: #ef4444; }
 
-    /* Main Chat Area */
-    #main { flex: 1; display: flex; flex-direction: column; max-width: 100%; height: 100dvh; background: var(--bg-light); }
+    /* Main Area */
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      background: #ffffff;
+      position: relative;
+    }
+
+    /* Top Bar - Clean & Minimal */
     header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 0.75rem 1.25rem;
+      justify-content: flex-start;
+      padding: 0.65rem 1.25rem;
       background: #ffffff;
-      border-bottom: 1px solid #e2e8f0;
-      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-    }
-    .header-left { display: flex; align-items: center; gap: 0.75rem; }
-    .header-logo {
-      width: 26px;
-      height: 26px;
-      object-fit: contain;
+      min-height: 44px;
     }
     #menuBtn {
       display: none;
-      background: #f1f5f9;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
       color: #1e293b;
-      border: 1px solid #cbd5e1;
-      padding: 0.45rem 0.75rem;
+      padding: 0.4rem 0.65rem;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 1rem;
-    }
-    #chatTitle { margin: 0; font-size: 1.05rem; font-weight: 700; color: #0f172a; }
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-size: 0.75rem;
-      color: var(--accent-green);
-      font-weight: 600;
-      background: #ecfdf5;
-      padding: 0.25rem 0.6rem;
-      border-radius: 9999px;
-      border: 1px solid #a7f3d0;
-    }
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-green); }
-
-    /* Chips Container */
-    #chipsContainer {
-      display: flex;
-      gap: 0.5rem;
-      padding: 0.6rem 1.25rem;
-      background: #ffffff;
-      border-bottom: 1px solid #f1f5f9;
-      overflow-x: auto;
-      white-space: nowrap;
-      scrollbar-width: none;
-    }
-    #chipsContainer::-webkit-scrollbar { display: none; }
-    .chip {
-      background: #f1f5f9;
-      color: #334155;
-      border: 1px solid #e2e8f0;
-      padding: 0.35rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      flex-shrink: 0;
-    }
-    .chip:hover {
-      background: #e2e8f0;
-      color: #0f172a;
-      border-color: #cbd5e1;
+      font-size: 0.95rem;
     }
 
-    /* Message stream */
-    #chat {
+    /* Main Stage Container */
+    #stage {
       flex: 1;
-      overflow-y: auto;
-      padding: 1.25rem;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      max-width: 900px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Centered Homepage Hero (Empty State) */
+    #heroContainer {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      text-align: center;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-logo {
+      width: 105px;
+      height: 105px;
+      margin-bottom: 1.25rem;
+    }
+    .hero-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .hero-title {
+      font-family: "Segoe UI Variable Display", "Segoe UI Variable Text", "Segoe UI", sans-serif;
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: #0f172a;
+      text-transform: uppercase;
+      margin: 0 0 2rem 0;
+    }
+
+    /* Centered Chat Input Box */
+    .hero-input-area {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .copilot-input-wrapper {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 28px;
+      padding: 0.4rem 0.6rem 0.4rem 1.15rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease;
+    }
+    .copilot-input-wrapper:focus-within {
+      border-color: #2563eb;
+      box-shadow: 0 4px 20px rgba(37, 99, 235, 0.12);
+    }
+    .copilot-input-wrapper input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 0.95rem;
+      color: #0f172a;
+      background: transparent;
+      padding: 0.55rem 0;
+    }
+    .copilot-input-wrapper input::placeholder {
+      color: #94a3b8;
+    }
+    .input-plus-btn {
+      color: #64748b;
+      background: transparent;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 0 4px;
+      display: flex;
+      align-items: center;
+    }
+    .input-send-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #0f172a;
+      color: #ffffff;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    .input-send-btn:hover { background: #2563eb; }
+    .input-send-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+    /* Suggested Prompt Chips (Pure text, No icons) */
+    .suggested-prompts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-top: 1.25rem;
+      max-width: 680px;
+    }
+    .prompt-chip {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      padding: 0.44rem 1rem;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .prompt-chip:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: #0f172a;
+      transform: translateY(-1px);
+    }
+
+    /* Chat Conversation View (Hidden when empty) */
+    #chatList {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+      display: none;
+      flex-direction: column;
+      gap: 1.25rem;
+      max-width: 820px;
       width: 100%;
       margin: 0 auto;
     }
-
     .msg-wrap { display: flex; flex-direction: column; width: 100%; }
     .msg {
-      padding: 0.85rem 1.15rem;
-      border-radius: 12px;
+      padding: 0.9rem 1.2rem;
+      border-radius: 14px;
       line-height: 1.6;
-      max-width: 90%;
+      max-width: 88%;
       word-wrap: break-word;
-      font-size: 0.95rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      font-size: 0.94rem;
     }
     .msg.user {
-      background: var(--primary);
-      color: #ffffff;
+      background: #f1f5f9;
+      color: #0f172a;
       align-self: flex-end;
-      border-bottom-right-radius: 2px;
+      border: 1px solid #e2e8f0;
+      border-bottom-right-radius: 4px;
     }
     .msg.model {
-      background: var(--card-bg);
+      background: #ffffff;
       border: 1px solid #e2e8f0;
       align-self: flex-start;
-      border-bottom-left-radius: 2px;
+      border-bottom-left-radius: 4px;
       color: #1e293b;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      width: 100%;
+      max-width: 100%;
     }
 
-    /* Markdown & Tables */
+    /* Markdown styling inside answers */
     .msg.model table {
       width: 100%;
       border-collapse: collapse;
       margin: 0.75rem 0;
       font-size: 0.88rem;
-      background: #ffffff;
+      border: 1px solid #e2e8f0;
       border-radius: 8px;
       overflow: hidden;
-      border: 1px solid #e2e8f0;
     }
     .msg.model th {
       background: #f8fafc;
@@ -271,15 +380,13 @@
     }
     .msg.model tr:last-child td { border-bottom: none; }
     .msg.model tr:nth-child(even) td { background: #fafafa; }
-    .msg.model strong { color: #0f172a; }
     .msg.model ul, .msg.model ol { padding-left: 1.25rem; margin: 0.5rem 0; }
     .msg.model li { margin-bottom: 0.35rem; }
 
-    /* Action bar under bot message */
     .msg-actions {
       display: flex;
       gap: 0.5rem;
-      margin-top: 0.35rem;
+      margin-top: 0.4rem;
       align-self: flex-start;
     }
     .action-btn {
@@ -290,108 +397,375 @@
       padding: 0.25rem 0.6rem;
       border-radius: 6px;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
     }
-    .action-btn:hover { background: #f1f5f9; color: #1e293b; }
+    .action-btn:hover { background: #f1f5f9; color: #0f172a; }
 
-    /* Input bar */
-    form {
+    /* ========================================================
+       1. PROGRESSIVE BACKGROUND STEPS CARD (Copilot Style)
+       ======================================================== */
+    .steps-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      background: #f8fafc;
+      margin-bottom: 0.85rem;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+    .steps-header {
       display: flex;
-      gap: 0.6rem;
-      padding: 0.75rem 1.25rem;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.75rem;
+      background: #f8fafc;
+      cursor: pointer;
+      user-select: none;
+      font-size: 0.82rem;
+    }
+    .steps-header:hover {
+      background: #f1f5f9;
+    }
+    .steps-header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      color: #334155;
+    }
+    .status-indicator-spinner {
+      width: 13px;
+      height: 13px;
+      border: 2px solid #cbd5e1;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .status-indicator-spinner.done {
+      border: none;
+      animation: none;
+      width: 15px;
+      height: 15px;
+      background: #16a34a;
+      border-radius: 50%;
+      position: relative;
+    }
+    .status-indicator-spinner.done::after {
+      content: '✓';
+      color: #ffffff;
+      font-size: 9px;
+      font-weight: 700;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .steps-header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: #64748b;
+      font-size: 0.75rem;
+    }
+    .steps-count-badge {
       background: #ffffff;
-      border-top: 1px solid #e2e8f0;
-      max-width: 900px;
+      border: 1px solid #e2e8f0;
+      padding: 0.12rem 0.5rem;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+    .steps-chevron {
+      display: flex;
+      align-items: center;
+      transition: transform 0.2s ease;
+    }
+    .steps-card.collapsed .steps-chevron {
+      transform: rotate(-90deg);
+    }
+    .steps-body {
+      padding: 0.5rem 0.85rem 0.75rem 0.85rem;
+      border-top: 1px solid #f1f5f9;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      position: relative;
+    }
+    .steps-card.collapsed .steps-body {
+      display: none;
+    }
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      position: relative;
+    }
+    /* Vertical connecting stepper line */
+    .step-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 18px;
+      bottom: -9px;
+      width: 1px;
+      background: #e2e8f0;
+    }
+    .step-marker {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      z-index: 1;
+    }
+    .step-item.pending .step-marker {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+    }
+    .step-item.pending .step-spinner,
+    .step-item.pending .step-icon {
+      display: none;
+    }
+    .step-item.active .step-marker {
+      background: #eff6ff;
+    }
+    .step-item.active .step-spinner {
+      display: block;
+      width: 13px;
+      height: 13px;
+      border: 2px solid #bfdbfe;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .step-item.active .step-icon {
+      display: none;
+    }
+    .step-item.completed .step-marker {
+      background: #16a34a;
+      border: none;
+    }
+    .step-item.completed .step-spinner {
+      display: none;
+    }
+    .step-item.completed .step-icon {
+      display: block;
+      color: #ffffff;
+      font-size: 9px;
+      font-weight: bold;
+      line-height: 1;
+    }
+    .step-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .step-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #334155;
+    }
+    .step-item.active .step-name {
+      color: #2563eb;
+    }
+    .step-sub {
+      font-size: 0.74rem;
+      color: #64748b;
+      margin-top: 1px;
+      line-height: 1.4;
+    }
+    .step-sub code {
+      background: #f1f5f9;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.72rem;
+      color: #0f172a;
+    }
+    .step-item.pending {
+      opacity: 0.5;
+    }
+
+    /* ========================================================
+       2. ANIMATED SEARCHING STATUS (Replaces static "...")
+       ======================================================== */
+    .searching-status-box {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.55rem 0.95rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      margin: 0.4rem 0 0.6rem 0;
+      width: fit-content;
+      animation: fadeIn 0.2s ease;
+    }
+    .searching-radar {
+      position: relative;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2563eb;
+    }
+    .search-lens {
+      animation: searchPulse 1.6s ease-in-out infinite;
+    }
+    @keyframes searchPulse {
+      0%, 100% { transform: scale(0.95); opacity: 0.85; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+    .radar-ping {
+      position: absolute;
       width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid #2563eb;
+      opacity: 0.75;
+      animation: radarRing 1.6s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    }
+    @keyframes radarRing {
+      0% { transform: scale(0.6); opacity: 0.8; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+    .searching-label-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #334155;
+    }
+    .searching-label {
+      background: linear-gradient(90deg, #1e293b 0%, #2563eb 50%, #1e293b 100%);
+      background-size: 200% auto;
+      color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: shimmerText 2.4s linear infinite;
+    }
+    @keyframes shimmerText {
+      to { background-position: 200% center; }
+    }
+    .searching-dots {
+      display: flex;
+      gap: 3.5px;
+      align-items: center;
+    }
+    .searching-dots span {
+      width: 3.5px;
+      height: 3.5px;
+      border-radius: 50%;
+      background-color: #2563eb;
+      animation: dotBounce 1.4s infinite ease-in-out both;
+    }
+    .searching-dots span:nth-child(1) { animation-delay: -0.32s; }
+    .searching-dots span:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes dotBounce {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40% { transform: scale(1.2); opacity: 1; }
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .ai-reply-content {
+      line-height: 1.65;
+    }
+
+    /* Bottom Docked Input (When in conversation mode) */
+    #bottomDock {
+      display: none;
+      padding: 0.85rem 1.5rem 1.25rem 1.5rem;
+      background: #ffffff;
+      border-top: 1px solid #f1f5f9;
+    }
+    #bottomDock .copilot-input-wrapper {
+      max-width: 820px;
       margin: 0 auto;
     }
-    input {
-      flex: 1;
-      padding: 0.8rem 1rem;
-      font-size: 0.95rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      outline: none;
-      transition: border 0.15s;
-    }
-    input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-    #sendBtn {
-      padding: 0.8rem 1.4rem;
-      font-size: 0.95rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 10px;
-      background: var(--primary);
-      color: #fff;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    #sendBtn:hover { background: var(--primary-hover); }
-    #sendBtn:disabled { background: #93c5fd; cursor: not-allowed; }
 
     /* Mobile Responsive */
     @media (max-width: 768px) {
       #sidebar { position: fixed; top: 0; bottom: 0; left: 0; transform: translateX(-100%); }
       #sidebar.open { transform: translateX(0); }
       #menuBtn { display: inline-block; }
+      .hero-title { font-size: 1.15rem; letter-spacing: 0.14em; }
+      .hero-logo { width: 80px; height: 80px; }
       .msg { max-width: 95%; font-size: 0.92rem; }
-      header { padding: 0.6rem 1rem; }
-      #chat { padding: 0.75rem; }
-      form { padding: 0.6rem 0.75rem; }
     }
   </style>
 </head>
 <body>
-  <!-- Sidebar -->
+  <!-- Copilot Sidebar -->
   <aside id="sidebar">
-    <div class="brand">
-      <div class="brand-logo-container">
-        <img src="icon.png" alt="Renault Logo" class="brand-logo-img" />
-      </div>
-      <div>
-        <div class="brand-title">IMI Agent</div>
-        <div class="brand-subtitle">Automotive Intelligence</div>
+    <div class="sidebar-header">
+      <div class="copilot-brand">
+        <img src="icon.png" alt="IMI" class="copilot-brand-icon" />
+        <span>IMI</span>
       </div>
     </div>
+
     <button id="newChatBtn" type="button">
-      <span>+</span> New Inquiry
+      <span>+</span> New chat
     </button>
+
+    <div class="chats-section-title">Chats</div>
     <div id="threadList"></div>
   </aside>
 
   <!-- Main View -->
   <main id="main">
+    <!-- Minimal Top Bar -->
     <header>
-      <div class="header-left">
-        <button id="menuBtn" type="button" aria-label="Toggle menu">☰</button>
-        <img src="icon.png" alt="Renault" class="header-logo" />
-        <h3 id="chatTitle">New Chat</h3>
-      </div>
-      <div class="status-badge">
-        <span class="status-dot"></span>
-        <span>Database Connected</span>
-      </div>
+      <button id="menuBtn" type="button" aria-label="Toggle menu">☰</button>
     </header>
 
-    <!-- Quick Inquiry Chips -->
-    <div id="chipsContainer">
-      <button class="chip" onclick="submitChip('Show me complete specifications for Hyundai Venue')">📋 Venue Specs</button>
-      <button class="chip" onclick="submitChip('Compare Hyundai Venue and Kia Sonet on dimensions and ground clearance')">⚖️ Venue vs Sonet</button>
-      <button class="chip" onclick="submitChip('What is the ARAI fuel efficiency of Hyundai Venue petrol vs diesel?')">⛽ Venue Mileage</button>
-      <button class="chip" onclick="submitChip('How many units of Hyundai Venue were dispatched in September 2026?')">📊 Sep-26 Sales</button>
-      <button class="chip" onclick="submitChip('Does Hyundai Venue have ADAS and Sunroof?')">🛡️ ADAS & Features</button>
+    <!-- Stage Area -->
+    <div id="stage">
+      <!-- Centered Homepage Hero (Empty State) -->
+      <div id="heroContainer">
+        <div class="hero-logo">
+          <img src="icon.png" alt="Renault Diamond" />
+        </div>
+        <h1 class="hero-title">INDIA MARKET INTELLIGENCE</h1>
+
+        <!-- Centered Chat Input -->
+        <div class="hero-input-area">
+          <form id="heroForm" class="copilot-input-wrapper">
+            <button type="button" class="input-plus-btn" title="Add context">+</button>
+            <input type="text" id="heroInput" placeholder="Message IMI..." required autocomplete="off" />
+            <button type="submit" class="input-send-btn" id="heroSendBtn">➔</button>
+          </form>
+
+          <!-- Suggested Prompt Chips (Text Only - Pastes directly into chat input without auto-sending) -->
+          <div class="suggested-prompts">
+            <button class="prompt-chip" type="button" onclick="pastePrompt('What are the dimensions, boot space, and price range of Hyundai Venue?')">Venue Specs</button>
+            <button class="prompt-chip" type="button" onclick="pastePrompt('What is the complete ADAS specification of Hyundai Venue?')">ADAS of Venue</button>
+            <button class="prompt-chip" type="button" onclick="pastePrompt('Compare Hyundai Venue and Kia Sonet on dimensions and ground clearance')">Venue vs Sonet</button>
+            <button class="prompt-chip" type="button" onclick="pastePrompt('How many units of Hyundai Venue were dispatched in September 2026?')">Sep-26 Sales</button>
+            <button class="prompt-chip" type="button" onclick="pastePrompt('Which 38 vehicles are available for benchmarking in the Indian automotive market?')">38 Benchmark Vehicles</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Conversation List (Shown after first message) -->
+      <div id="chatList"></div>
+
+      <!-- Bottom Docked Input (Active during conversation) -->
+      <div id="bottomDock">
+        <form id="dockForm" class="copilot-input-wrapper">
+          <button type="button" class="input-plus-btn">+</button>
+          <input type="text" id="dockInput" placeholder="Message IMI..." required autocomplete="off" />
+          <button type="submit" class="input-send-btn" id="dockSendBtn">➔</button>
+        </form>
+      </div>
     </div>
-
-    <!-- Chat Messages -->
-    <div id="chat"></div>
-
-    <!-- Input Form -->
-    <form id="chatForm">
-      <input type="text" id="userInput" placeholder="Ask about specifications, mileage, or sales..." required autocomplete="off" />
-      <button type="submit" id="sendBtn">Send</button>
-    </form>
   </main>
 
   <script>
@@ -399,19 +773,25 @@
       navigator.serviceWorker.register('./sw.js').catch(console.error);
     }
 
-    // Cloudflare Worker URL
-    const WORKER_URL = "https://old-flower-10fc.v-dasan-nk.workers.dev";
-    const STORAGE_KEY = "showroom_copilot_threads_v1";
+    // Cloudflare Worker URL (db_imi backend)
+    const WORKER_URL = "https://blue-darkness-dbbe.imi-renault.workers.dev";
+    const STORAGE_KEY = "imi_copilot_threads_v2";
 
     const sidebar = document.getElementById('sidebar');
     const menuBtn = document.getElementById('menuBtn');
     const newChatBtn = document.getElementById('newChatBtn');
     const threadList = document.getElementById('threadList');
-    const chatTitle = document.getElementById('chatTitle');
-    const chatBox = document.getElementById('chat');
-    const chatForm = document.getElementById('chatForm');
-    const userInput = document.getElementById('userInput');
-    const sendBtn = document.getElementById('sendBtn');
+    const heroContainer = document.getElementById('heroContainer');
+    const chatList = document.getElementById('chatList');
+    const bottomDock = document.getElementById('bottomDock');
+
+    const heroForm = document.getElementById('heroForm');
+    const heroInput = document.getElementById('heroInput');
+    const heroSendBtn = document.getElementById('heroSendBtn');
+
+    const dockForm = document.getElementById('dockForm');
+    const dockInput = document.getElementById('dockInput');
+    const dockSendBtn = document.getElementById('dockSendBtn');
 
     let threads = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
     let activeThreadId = threads[0]?.id || null;
@@ -421,7 +801,7 @@
     }
 
     function createThread() {
-      const newThread = { id: Date.now().toString(), title: "New Inquiry", messages: [] };
+      const newThread = { id: Date.now().toString(), title: "New chat", messages: [] };
       threads.unshift(newThread);
       activeThreadId = newThread.id;
       saveThreads();
@@ -476,7 +856,7 @@
     function copyToClipboard(text, btn) {
       navigator.clipboard.writeText(text).then(() => {
         const orig = btn.innerHTML;
-        btn.innerHTML = '✓ Copied';
+        btn.innerHTML = 'Copied';
         setTimeout(() => btn.innerHTML = orig, 1800);
       });
     }
@@ -495,50 +875,523 @@
         actions.className = 'msg-actions';
         const copyBtn = document.createElement('button');
         copyBtn.className = 'action-btn';
-        copyBtn.innerHTML = '📋 Copy';
+        copyBtn.innerHTML = 'Copy';
         copyBtn.onclick = () => copyToClipboard(text, copyBtn);
         actions.appendChild(copyBtn);
         wrap.appendChild(actions);
       }
 
-      chatBox.appendChild(wrap);
-      chatBox.scrollTop = chatBox.scrollHeight;
+      chatList.appendChild(wrap);
+      chatList.scrollTop = chatList.scrollHeight;
       return div;
+    }
+
+    // Dynamic Query Analyzer: Generates customized progressive steps and search animations based on user query
+    function buildDynamicSteps(userQuery) {
+      const q = (userQuery || "").toLowerCase().trim();
+
+      const catalog = [
+        { name: "Hyundai Venue", oem: "Hyundai", rx: /\bvenue\b/i },
+        { name: "Hyundai Creta", oem: "Hyundai", rx: /\bcreta\b/i },
+        { name: "Hyundai Exter", oem: "Hyundai", rx: /\bexter\b/i },
+        { name: "Hyundai Alcazar", oem: "Hyundai", rx: /\balcazar\b/i },
+        { name: "Hyundai Bayon", oem: "Hyundai", rx: /\bbayon\b/i },
+        { name: "Kia Sonet", oem: "Kia", rx: /\bsonet\b/i },
+        { name: "Kia Seltos", oem: "Kia", rx: /\bseltos\b/i },
+        { name: "Kia Syros", oem: "Kia", rx: /\bsyros\b/i },
+        { name: "Kia Carens", oem: "Kia", rx: /\bcarens|clavis\b/i },
+        { name: "Tata Nexon", oem: "Tata", rx: /\bnexon\b/i },
+        { name: "Tata Punch", oem: "Tata", rx: /\bpunch\b/i },
+        { name: "Tata Sierra", oem: "Tata", rx: /\bsierra\b/i },
+        { name: "Mahindra 3XO", oem: "Mahindra", rx: /\b3xo|xuv300\b/i },
+        { name: "Mahindra 7XO", oem: "Mahindra", rx: /\b7xo|xuv700\b/i },
+        { name: "Mahindra Thar", oem: "Mahindra", rx: /\bthar\b/i },
+        { name: "Maruti Brezza", oem: "Maruti Suzuki", rx: /\bbrezza\b/i },
+        { name: "Maruti Fronx", oem: "Maruti Suzuki", rx: /\bfronx\b/i },
+        { name: "Maruti Grand Vitara", oem: "Maruti Suzuki", rx: /\bgrand\s*vitara|grandvitara\b/i },
+        { name: "Maruti Ertiga", oem: "Maruti Suzuki", rx: /\bertiga\b/i },
+        { name: "Renault Duster", oem: "Renault", rx: /\bduster\b/i },
+        { name: "Renault Kiger", oem: "Renault", rx: /\bkiger\b/i },
+        { name: "Renault Triber", oem: "Renault", rx: /\btriber\b/i },
+        { name: "Renault Kwid", oem: "Renault", rx: /\bkwid\b/i },
+        { name: "Nissan Magnite", oem: "Nissan", rx: /\bmagnite\b/i },
+        { name: "Nissan Gravite", oem: "Nissan", rx: /\bgravite\b/i },
+        { name: "Skoda Kylaq", oem: "Skoda", rx: /\bkylaq\b/i },
+        { name: "Volkswagen Taigun", oem: "Volkswagen", rx: /\btaigun\b/i },
+        { name: "Honda Elevate", oem: "Honda", rx: /\belevate\b/i },
+        { name: "Toyota Hyryder", oem: "Toyota", rx: /\bhyryder\b/i },
+        { name: "Toyota Innova", oem: "Toyota", rx: /\binnova\b/i },
+        { name: "MG Windsor", oem: "MG", rx: /\bwindsor\b/i }
+      ];
+
+      const matched = catalog.filter(c => c.rx.test(userQuery));
+      const isCatalog = /\b(list\s*all|all\s*the\s*vehicles|vehicles\s*in|what\s*vehicles|what\s*cars|show\s*all|catalog|38\s*vehicles|38\s*benchmark|all\s*models|which\s*vehicles|database)\b/i.test(q) && (matched.length === 0 || /\b(list|all)\b/i.test(q));
+      const isComparison = (matched.length >= 2) || /\b(compare|vs|versus|difference|better)\b/i.test(q);
+      const isSales = /\b(sales|units|dispatched|dispatch|volume|sep26|september|dispatches|market\s*share|sold)\b/i.test(q);
+      const isADAS = /\b(adas|safety|airbag|airbags|collision|lane|acc|sensor|blind\s*spot|esp|abs)\b/i.test(q);
+      const isSeats = /\b(seat|seats|seater|seating|row|ventilated|reclining)\b/i.test(q);
+      const isPrice = /\b(price|pricing|cost|budget|kinr|lakh|lakhs|variant|variants|ex\s*showroom)\b/i.test(q);
+      const isSpecs = /\b(dimension|dimensions|length|width|height|wheelbase|ground\s*clearance|clearance|boot|bootspace|boot\s*space|turning\s*radius|weight|spec|specs|specification|specifications)\b/i.test(q);
+      const isPowertrain = /\b(engine|power|torque|turbo|petrol|diesel|transmission|gearbox|automatic|manual|mileage|fuel|ev|battery|range)\b/i.test(q);
+      const isComfort = /\b(sunroof|touchscreen|screen|infotainment|audio|speaker|wireless|carplay|android|ac|climate|cruise)\b/i.test(q);
+
+      let targetLabel = matched.length > 0 ? matched.map(m => m.name).join(" & ") : "Benchmark Vehicles";
+      let searchLabel = "Analyzing inquiry";
+      let steps = [];
+
+      // 1. Catalog / List All Vehicles in Database
+      if (isCatalog) {
+        searchLabel = "Scanning vehicle catalog in tbl_features";
+        steps = [
+          {
+            name: "Analyzing vehicle catalog request",
+            sub: "Parsing database query for all 38 benchmark models in tbl_features",
+            search: "Parsing catalog inquiry"
+          },
+          {
+            name: "Querying tbl_features database",
+            sub: "Executing `SELECT DISTINCT Vehicle FROM tbl_features`",
+            search: "Querying distinct vehicles"
+          },
+          {
+            name: "Categorizing OEM & Brand segments",
+            sub: "Grouping models across Hyundai, Kia, Tata, Mahindra, Maruti, Renault & Nissan",
+            search: "Categorizing 38 models"
+          },
+          {
+            name: "Structuring vehicle catalog",
+            sub: "Formatting complete vehicle list into organized showroom table",
+            search: "Structuring showroom catalog"
+          }
+        ];
+      }
+      // 2. Head-to-Head Comparison
+      else if (isComparison) {
+        const v1 = matched[0]?.name || "Vehicle A";
+        const v2 = matched[1]?.name || "Vehicle B";
+        searchLabel = `Comparing ${v1} vs ${v2}`;
+        steps = [
+          {
+            name: "Analyzing comparative parameters",
+            sub: `Head-to-head comparison: ${v1} vs ${v2} on specifications & segment positioning`,
+            search: `Analyzing ${v1} vs ${v2}`
+          },
+          {
+            name: "Querying dual records from tbl_features",
+            sub: `Fetching dimensions, ground clearance, ADAS & features for both models`,
+            search: `Querying records for ${v1} & ${v2}`
+          },
+          {
+            name: "Benchmarking metric deltas",
+            sub: `Calculating dimension variances, ground clearance deltas & feature parity`,
+            search: "Calculating comparative deltas"
+          },
+          {
+            name: "Generating comparative matrix",
+            sub: "Structuring side-by-side comparison table highlighting competitor differentiators",
+            search: "Formatting comparison matrix"
+          }
+        ];
+      }
+      // 3. ADAS & Safety Suite
+      else if (isADAS) {
+        searchLabel = `Checking ADAS & safety package for ${targetLabel}`;
+        steps = [
+          {
+            name: "Analyzing safety & ADAS perimeter",
+            sub: `Target: ${targetLabel} | Scope: ADAS Level 1/2 suite & active safety equipment`,
+            search: `Analyzing ${targetLabel} safety package`
+          },
+          {
+            name: "Querying tbl_features (ADAS & Safety)",
+            sub: `Fetching Forward Collision Warning, Lane Keep Assist, Airbag count & ESC for ${targetLabel}`,
+            search: "Querying ADAS & Safety records"
+          },
+          {
+            name: "Auditing active safety suite",
+            sub: "Validating radar/camera architecture and standard vs optional safety equipment",
+            search: "Auditing active safety suite"
+          },
+          {
+            name: "Structuring safety specification",
+            sub: "Compiling verified ADAS feature checklist and safety equipment matrix",
+            search: "Structuring ADAS checklist"
+          }
+        ];
+      }
+      // 4. Sales & Wholesale Dispatches
+      else if (isSales) {
+        searchLabel = `Querying September 2026 sales for ${targetLabel}`;
+        steps = [
+          {
+            name: "Analyzing commercial volume inquiry",
+            sub: `Target: ${targetLabel} | Scope: September 2026 wholesale dispatch sales`,
+            search: "Analyzing dispatch figures"
+          },
+          {
+            name: "Querying tbl_sales database",
+            sub: `Executing SELECT OEM, Vehicle, Segment, Sep26 FROM tbl_sales`,
+            search: "Querying September 2026 sales"
+          },
+          {
+            name: "Evaluating OEM wholesale dispatches",
+            sub: "Extracting official wholesale dispatch units and segment market distribution",
+            search: "Evaluating wholesale figures"
+          },
+          {
+            name: "Synthesizing market performance",
+            sub: "Reporting verified sales figures, segment ranking & market share",
+            search: "Formatting commercial report"
+          }
+        ];
+      }
+      // 5. Seats & Interior Configuration
+      else if (isSeats) {
+        searchLabel = `Checking cabin seating layout for ${targetLabel}`;
+        steps = [
+          {
+            name: "Analyzing seating & interior configuration",
+            sub: `Target: ${targetLabel} | Attribute: Cabin seating capacity & row ergonomics`,
+            search: `Checking ${targetLabel} seats`
+          },
+          {
+            name: "Querying tbl_features (Seats)",
+            sub: `Retrieving seat count, 2nd row split (40:60), ventilation & 3rd row availability for ${targetLabel}`,
+            search: "Querying cabin seating specifications"
+          },
+          {
+            name: "Verifying cabin ergonomics",
+            sub: "Validating passenger capacity, backrest recline and bench configuration",
+            search: "Verifying passenger capacity"
+          },
+          {
+            name: "Synthesizing interior confirmation",
+            sub: "Formulating verified seating capacity confirmation and row specifications",
+            search: "Formatting seating report"
+          }
+        ];
+      }
+      // 6. Dimensions & Specifications
+      else if (isSpecs) {
+        searchLabel = `Retrieving dimensions & specs for ${targetLabel}`;
+        steps = [
+          {
+            name: "Analyzing vehicle dimensions inquiry",
+            sub: `Target: ${targetLabel} | Attributes: Length, Width, Height, Clearance & Boot Space`,
+            search: `Analyzing ${targetLabel} dimensions`
+          },
+          {
+            name: "Querying tbl_features (Specification)",
+            sub: `Retrieving unladen ground clearance, exterior dimensions & boot volume for ${targetLabel}`,
+            search: "Querying specifications from tbl_features"
+          },
+          {
+            name: "Validating segment measurements",
+            sub: "Cross-checking millimeter measurements against 38 Indian market benchmarks",
+            search: "Validating millimeter measurements"
+          },
+          {
+            name: "Structuring technical specification",
+            sub: "Compiling verified showroom measurement table with exact values",
+            search: "Formatting dimensions table"
+          }
+        ];
+      }
+      // 7. Price & Variant Pricing
+      else if (isPrice) {
+        searchLabel = `Checking price range for ${targetLabel}`;
+        steps = [
+          {
+            name: "Analyzing showroom pricing inquiry",
+            sub: `Target: ${targetLabel} | Parameter: Showroom Price Range in KINR`,
+            search: `Analyzing ${targetLabel} price`
+          },
+          {
+            name: "Querying tbl_features (Price)",
+            sub: `Retrieving variant price bracket in thousand INR (KINR) for ${targetLabel}`,
+            search: "Querying price records from tbl_features"
+          },
+          {
+            name: "Evaluating segment price competitiveness",
+            sub: "Benchmarking price span against direct competitive alternatives in segment",
+            search: "Evaluating price positioning"
+          },
+          {
+            name: "Structuring pricing guidance",
+            sub: "Compiling verified showroom price range in thousand INR (KINR)",
+            search: "Formatting price summary"
+          }
+        ];
+      }
+      // 8. Powertrain & Performance
+      else if (isPowertrain) {
+        searchLabel = `Checking powertrain & engine for ${targetLabel}`;
+        steps = [
+          {
+            name: "Analyzing powertrain & performance inquiry",
+            sub: `Target: ${targetLabel} | Scope: Engine displacement, power/torque & gearbox`,
+            search: `Analyzing ${targetLabel} powertrain`
+          },
+          {
+            name: "Querying tbl_features (Powertrain)",
+            sub: `Fetching motor outputs, fuel types, transmission options & battery specs for ${targetLabel}`,
+            search: "Querying powertrain data"
+          },
+          {
+            name: "Auditing drivetrain specifications",
+            sub: "Validating performance output curves against showroom segment rivals",
+            search: "Auditing performance figures"
+          },
+          {
+            name: "Structuring technical performance matrix",
+            sub: "Formatting engine options, horsepower, torque & transmission choices",
+            search: "Formatting performance report"
+          }
+        ];
+      }
+      // 9. Comfort, Technology & Equipment
+      else if (isComfort) {
+        searchLabel = `Checking technology & comfort equipment for ${targetLabel}`;
+        steps = [
+          {
+            name: "Analyzing equipment & comfort inquiry",
+            sub: `Target: ${targetLabel} | Perimeter: Comfort & Convenience / HMI equipment`,
+            search: `Analyzing ${targetLabel} features`
+          },
+          {
+            name: "Querying tbl_features (Comfort & HMI)",
+            sub: `Retrieving sunroof, infotainment screen size, wireless connectivity & audio package for ${targetLabel}`,
+            search: "Querying features from tbl_features"
+          },
+          {
+            name: "Evaluating showroom feature presence",
+            sub: "Validating standard vs optional equipment across model trim grades",
+            search: "Evaluating feature availability"
+          },
+          {
+            name: "Structuring equipment overview",
+            sub: "Compiling verified convenience & technology features table",
+            search: "Formatting equipment checklist"
+          }
+        ];
+      }
+      // 10. General Automotive Fallback
+      else {
+        const summaryQ = userQuery.slice(0, 42) + (userQuery.length > 42 ? "..." : "");
+        searchLabel = "Analyzing inquiry";
+        steps = [
+          {
+            name: "Understanding automotive inquiry",
+            sub: `Processing "${summaryQ}"`,
+            search: "Understanding inquiry context"
+          },
+          {
+            name: "Querying db_imi database",
+            sub: "Searching verified tables (tbl_features & tbl_sales) for matching context",
+            search: "Querying database records"
+          },
+          {
+            name: "Cross-referencing 38 benchmark models",
+            sub: "Filtering OEM verified specifications and showroom competitor data",
+            search: "Filtering verified data"
+          },
+          {
+            name: "Synthesizing market intelligence",
+            sub: "Formulating structured, verified guidance for showroom sales consultants",
+            search: "Formulating verified guidance"
+          }
+        ];
+      }
+
+      return { steps, initialSearchLabel: searchLabel };
+    }
+
+    // Creates active progressive steps card & live searching animation for ongoing query
+    function createProgressiveModelMessage(userQuery) {
+      const wrap = document.createElement('div');
+      wrap.className = 'msg-wrap';
+
+      const div = document.createElement('div');
+      div.className = 'msg model';
+
+      // Build 100% dynamic steps customized to this exact query
+      const dynamicInfo = buildDynamicSteps(userQuery);
+      const stepsData = dynamicInfo.steps;
+
+      div.innerHTML = `
+        <!-- Copilot Progressive Background Steps Card -->
+        <div class="steps-card">
+          <div class="steps-header" onclick="this.closest('.steps-card').classList.toggle('collapsed')">
+            <div class="steps-header-left">
+              <span class="status-indicator-spinner"></span>
+              <span class="steps-header-title">Working on response</span>
+            </div>
+            <div class="steps-header-right">
+              <span class="steps-count-badge">Step 1 of 4</span>
+              <span class="steps-chevron">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </div>
+          </div>
+          <div class="steps-body">
+            <div class="step-item active" data-step="1">
+              <div class="step-marker">
+                <span class="step-spinner"></span>
+                <span class="step-icon">✓</span>
+              </div>
+              <div class="step-text">
+                <div class="step-name">${DOMPurify.sanitize(stepsData[0].name)}</div>
+                <div class="step-sub">${DOMPurify.sanitize(stepsData[0].sub)}</div>
+              </div>
+            </div>
+
+            <div class="step-item pending" data-step="2">
+              <div class="step-marker">
+                <span class="step-spinner"></span>
+                <span class="step-icon">✓</span>
+              </div>
+              <div class="step-text">
+                <div class="step-name">${DOMPurify.sanitize(stepsData[1].name)}</div>
+                <div class="step-sub">${DOMPurify.sanitize(stepsData[1].sub)}</div>
+              </div>
+            </div>
+
+            <div class="step-item pending" data-step="3">
+              <div class="step-marker">
+                <span class="step-spinner"></span>
+                <span class="step-icon">✓</span>
+              </div>
+              <div class="step-text">
+                <div class="step-name">${DOMPurify.sanitize(stepsData[2].name)}</div>
+                <div class="step-sub">${DOMPurify.sanitize(stepsData[2].sub)}</div>
+              </div>
+            </div>
+
+            <div class="step-item pending" data-step="4">
+              <div class="step-marker">
+                <span class="step-spinner"></span>
+                <span class="step-icon">✓</span>
+              </div>
+              <div class="step-text">
+                <div class="step-name">${DOMPurify.sanitize(stepsData[3].name)}</div>
+                <div class="step-sub">${DOMPurify.sanitize(stepsData[3].sub)}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Animated Searching Indicator (Replaces plain "...") -->
+        <div class="searching-status-box">
+          <div class="searching-radar">
+            <svg class="search-lens" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span class="radar-ping"></span>
+          </div>
+          <div class="searching-label-wrap">
+            <span class="searching-label">${DOMPurify.sanitize(dynamicInfo.initialSearchLabel)}</span>
+            <span class="searching-dots">
+              <span></span><span></span><span></span>
+            </span>
+          </div>
+        </div>
+
+        <!-- AI Streaming Answer Markdown Container -->
+        <div class="ai-reply-content"></div>
+      `;
+
+      wrap.appendChild(div);
+      chatList.appendChild(wrap);
+      chatList.scrollTop = chatList.scrollHeight;
+
+      const stepsCard = div.querySelector('.steps-card');
+      const countBadge = div.querySelector('.steps-count-badge');
+      const searchingBox = div.querySelector('.searching-status-box');
+      const searchingLabel = div.querySelector('.searching-label');
+      const replyContent = div.querySelector('.ai-reply-content');
+      const stepItems = div.querySelectorAll('.step-item');
+      const statusSpinner = div.querySelector('.status-indicator-spinner');
+      const headerTitle = div.querySelector('.steps-header-title');
+
+      function setStep(stepNum) {
+        stepItems.forEach(item => {
+          const s = parseInt(item.getAttribute('data-step'));
+          if (s < stepNum) {
+            item.className = 'step-item completed';
+          } else if (s === stepNum) {
+            item.className = 'step-item active';
+          } else {
+            item.className = 'step-item pending';
+          }
+        });
+
+        countBadge.textContent = `Step ${stepNum} of 4`;
+        if (stepsData[stepNum - 1]) {
+          searchingLabel.textContent = stepsData[stepNum - 1].search;
+        }
+      }
+
+      const t1 = setTimeout(() => setStep(2), 650);
+      const t2 = setTimeout(() => setStep(3), 1350);
+      const t3 = setTimeout(() => setStep(4), 2100);
+
+      function finishSteps() {
+        clearTimeout(t1);
+        clearTimeout(t2);
+        clearTimeout(t3);
+        stepItems.forEach(item => item.className = 'step-item completed');
+        statusSpinner.classList.add('done');
+        headerTitle.textContent = '4 background steps completed';
+        countBadge.textContent = 'Done';
+        searchingBox.style.display = 'none';
+        stepsCard.classList.add('collapsed');
+      }
+
+      // Live SQL updater from server SSE (if available)
+      function updateStepSql(sql, count) {
+        const step2Sub = div.querySelector('.step-item[data-step="2"] .step-sub');
+        if (step2Sub && sql) {
+          step2Sub.innerHTML = `Executed: <code>${DOMPurify.sanitize(sql)}</code> (${count || 0} records fetched)`;
+        }
+      }
+
+      return { wrap, div, replyContent, finishSteps, updateStepSql };
     }
 
     function renderActiveChat() {
       const current = threads.find(t => t.id === activeThreadId);
       if (!current) return;
-      chatTitle.textContent = current.title;
-      chatBox.innerHTML = '';
+
+      chatList.innerHTML = '';
 
       if (current.messages.length === 0) {
-        appendMessage('model', `Hello, I'm **IMI Agent**! 🚘
-
-I can help you understand our competitors in the Indian automotive market.
-
-### 🚗 Available Vehicles for Search & Benchmarking (38 Models):
-- **Hyundai**: Venue, Creta, Creta EV, Exter, Alcazar, Bayon
-- **Kia**: Seltos, Sonet, Syros, Syros EV, Carens Clavis
-- **Tata**: Nexon, Punch, Punch EV, Sierra
-- **Mahindra**: 3XO, 3XO EV, 7XO, Thar OG
-- **Renault**: Duster, Kiger, Triber, Kwid
-- **Maruti Suzuki**: Brezza, Fronx, Grand Vitara, Victoris, Ertiga, S-Presso, Alto K10
-- **Toyota**: Hyryder, Innova Hycross
-- **Nissan**: Magnite, Gravite
-- **MG**: Windsor EV
-- **Skoda**: Kylaq | **Honda**: Elevate | **Volkswagen**: Taigun
-
----
-*Feel free to ask about **specifications**, **Bharat NCAP ratings**, **fuel economy**, or **sales volume**!*`);
+        // Show Centered Hero State
+        heroContainer.style.display = 'flex';
+        chatList.style.display = 'none';
+        bottomDock.style.display = 'none';
+        heroInput.value = '';
+        heroInput.focus();
       } else {
+        // Show Conversation View
+        heroContainer.style.display = 'none';
+        chatList.style.display = 'flex';
+        bottomDock.style.display = 'block';
         current.messages.forEach(msg => appendMessage(msg.role, msg.parts[0].text));
+        dockInput.focus();
       }
     }
 
-    function submitChip(promptText) {
-      userInput.value = promptText;
-      chatForm.dispatchEvent(new Event('submit'));
+    // Suggested Prompt Chip: Pastes into input WITHOUT submitting directly
+    function pastePrompt(promptText) {
+      const current = threads.find(t => t.id === activeThreadId);
+      if (current && current.messages.length > 0) {
+        dockInput.value = promptText;
+        dockInput.focus();
+      } else {
+        heroInput.value = promptText;
+        heroInput.focus();
+      }
     }
 
     menuBtn.addEventListener('click', () => sidebar.classList.toggle('open'));
@@ -547,20 +1400,18 @@ I can help you understand our competitors in the Indian automotive market.
     if (threads.length === 0) { createThread(); }
     else { renderSidebar(); renderActiveChat(); }
 
-    chatForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const text = userInput.value.trim();
+    async function handleUserSubmit(text) {
       if (!text) return;
-
       const currentThread = threads.find(t => t.id === activeThreadId);
       if (!currentThread) return;
 
-      userInput.value = '';
-      sendBtn.disabled = true;
+      // Switch to conversation mode
+      heroContainer.style.display = 'none';
+      chatList.style.display = 'flex';
+      bottomDock.style.display = 'block';
 
       if (currentThread.messages.length === 0) {
         currentThread.title = text.slice(0, 30) + (text.length > 30 ? "..." : "");
-        chatTitle.textContent = currentThread.title;
         renderSidebar();
       }
 
@@ -568,8 +1419,13 @@ I can help you understand our competitors in the Indian automotive market.
       currentThread.messages.push({ role: "user", parts: [{ text }] });
       saveThreads();
 
-      const aiDiv = appendMessage('model', '...');
+      heroSendBtn.disabled = true;
+      dockSendBtn.disabled = true;
+
+      // Initialize Progressive Background Steps & Live Searching Animation
+      const { wrap, div, replyContent, finishSteps, updateStepSql } = createProgressiveModelMessage(text);
       let fullReply = "";
+      let hasStartedStreaming = false;
 
       try {
         const response = await fetch(WORKER_URL, {
@@ -579,7 +1435,7 @@ I can help you understand our competitors in the Indian automotive market.
         });
 
         if (!response.ok) {
-          throw new Error(`Worker returned status ${response.status}`);
+          throw new Error(`Worker status ${response.status}`);
         }
 
         const reader = response.body.getReader();
@@ -599,30 +1455,63 @@ I can help you understand our competitors in the Indian automotive market.
               if (!jsonStr || jsonStr === "[DONE]") continue;
               try {
                 const parsed = JSON.parse(jsonStr);
+                // Handle live SQL step updates from Cloudflare Worker if transmitted
+                if (parsed.type === "step_sql" && updateStepSql) {
+                  updateStepSql(parsed.sql, parsed.count);
+                  continue;
+                }
                 const chunkText = parsed.candidates?.[0]?.content?.parts?.[0]?.text || "";
-                fullReply += chunkText;
-                aiDiv.innerHTML = renderMarkdown(fullReply);
-                chatBox.scrollTop = chatBox.scrollHeight;
+                if (chunkText) {
+                  if (!hasStartedStreaming) {
+                    hasStartedStreaming = true;
+                    finishSteps();
+                  }
+                  fullReply += chunkText;
+                  replyContent.innerHTML = renderMarkdown(fullReply);
+                  chatList.scrollTop = chatList.scrollHeight;
+                }
               } catch (parseErr) {}
             }
           }
         }
 
+        finishSteps();
         currentThread.messages.push({ role: "model", parts: [{ text: fullReply }] });
         saveThreads();
 
-        const wrap = aiDiv.parentElement;
-        const copyBtn = wrap.querySelector('.action-btn');
-        if (copyBtn) {
-          copyBtn.onclick = () => copyToClipboard(fullReply, copyBtn);
-        }
+        // Add Copy button below the completed message
+        const actions = document.createElement('div');
+        actions.className = 'msg-actions';
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'action-btn';
+        copyBtn.innerHTML = 'Copy';
+        copyBtn.onclick = () => copyToClipboard(fullReply, copyBtn);
+        actions.appendChild(copyBtn);
+        wrap.appendChild(actions);
 
       } catch (err) {
-        aiDiv.innerHTML = `⚠️ **Error retrieving data**: ${err.message}. Please check your connection.`;
+        finishSteps();
+        replyContent.innerHTML = `⚠️ **Notice**: ${err.message}. Please check connection.`;
       } finally {
-        sendBtn.disabled = false;
-        userInput.focus();
+        heroSendBtn.disabled = false;
+        dockSendBtn.disabled = false;
+        dockInput.value = '';
+        dockInput.focus();
       }
+    }
+
+    heroForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = heroInput.value.trim();
+      heroInput.value = '';
+      handleUserSubmit(val);
+    });
+
+    dockForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = dockInput.value.trim();
+      dockInput.value = '';
+      handleUserSubmit(val);
     });
   </script>
 </body>

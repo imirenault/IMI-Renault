@@ -1,11 +1,11 @@
 {
-  "name": "Showroom Copilot | Automotive Intelligence",
-  "short_name": "Showroom Copilot",
-  "description": "Verified Automotive Sales and Vehicle Intelligence Copilot",
+  "name": "India Market Intelligence | IMI",
+  "short_name": "IMI",
+  "description": "India Market Intelligence Automotive Benchmark & Sales Copilot",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "icons": [
     {
       "src": "icon.png",
