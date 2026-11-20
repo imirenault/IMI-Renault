@@ -1,15 +1,17 @@
 {
- "name": "Gemini Flash Multi-Thread PWA",
- "short_name": "Gemini PWA",
- "start_url": "./index.html",
- "display": "standalone",
- "background_color": "#f9fafb",
- "theme_color": "#111827",
- "icons": [
- {
- "src": "icon.png",
- "sizes": "512x512",
- "type": "image/png"
- }
- ]
+  "name": "Showroom Copilot | Automotive Intelligence",
+  "short_name": "Showroom Copilot",
+  "description": "Verified Automotive Sales and Vehicle Intelligence Copilot",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
