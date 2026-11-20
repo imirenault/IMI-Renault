@@ -316,7 +316,7 @@
       transform: translateY(-1px);
     }
 
-    /* Chat Conversation View (Hidden when empty) */
+    /* Chat Conversation View */
     #chatList {
       flex: 1;
       overflow-y: auto;
@@ -401,182 +401,117 @@
     .action-btn:hover { background: #f1f5f9; color: #0f172a; }
 
     /* ========================================================
-       1. PROGRESSIVE BACKGROUND STEPS CARD (Copilot Style)
+       SINGLE-LINE INLINE PROGRESSIVE THOUGHT (Antigravity Style)
+       - Transparent background, no card box, no color clash
+       - Collapsed by default into one clean, subtle line
        ======================================================== */
-    .steps-card {
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      background: #f8fafc;
-      margin-bottom: 0.85rem;
-      overflow: hidden;
-      transition: all 0.2s ease;
+    .inline-thought-container {
+      margin: 0.15rem 0 0.85rem 0;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0;
     }
-    .steps-header {
-      display: flex;
+    .inline-thought-header {
+      display: inline-flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 0.5rem 0.75rem;
-      background: #f8fafc;
+      gap: 0.45rem;
+      color: #64748b;
+      font-size: 0.82rem;
+      font-weight: 500;
       cursor: pointer;
       user-select: none;
-      font-size: 0.82rem;
+      padding: 0.15rem 0;
+      background: transparent !important;
+      transition: color 0.15s ease;
     }
-    .steps-header:hover {
-      background: #f1f5f9;
+    .inline-thought-header:hover {
+      color: #0f172a;
     }
-    .steps-header-left {
-      display: flex;
+    .thought-chevron {
+      display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      font-weight: 600;
-      color: #334155;
+      justify-content: center;
+      font-size: 0.72rem;
+      transition: transform 0.2s ease;
+      color: #94a3b8;
     }
-    .status-indicator-spinner {
-      width: 13px;
-      height: 13px;
-      border: 2px solid #cbd5e1;
+    .inline-thought-container.collapsed .thought-chevron {
+      transform: rotate(-90deg);
+    }
+    .thought-live-spinner {
+      width: 12px;
+      height: 12px;
+      border: 1.5px solid #cbd5e1;
       border-top-color: #2563eb;
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      animation: spin 0.7s linear infinite;
       display: inline-block;
       flex-shrink: 0;
     }
-    .status-indicator-spinner.done {
+    .thought-live-spinner.done {
       border: none;
       animation: none;
-      width: 15px;
-      height: 15px;
+      width: 13px;
+      height: 13px;
       background: #16a34a;
       border-radius: 50%;
       position: relative;
+      display: inline-block;
     }
-    .status-indicator-spinner.done::after {
+    .thought-live-spinner.done::after {
       content: '✓';
       color: #ffffff;
-      font-size: 9px;
+      font-size: 8px;
       font-weight: 700;
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
     }
-    .steps-header-right {
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
+    .thought-summary-label {
+      font-size: 0.82rem;
       color: #64748b;
-      font-size: 0.75rem;
     }
-    .steps-count-badge {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      padding: 0.12rem 0.5rem;
-      border-radius: 10px;
-      font-weight: 500;
-    }
-    .steps-chevron {
-      display: flex;
-      align-items: center;
-      transition: transform 0.2s ease;
-    }
-    .steps-card.collapsed .steps-chevron {
-      transform: rotate(-90deg);
-    }
-    .steps-body {
-      padding: 0.5rem 0.85rem 0.75rem 0.85rem;
-      border-top: 1px solid #f1f5f9;
-      background: #ffffff;
+    .inline-thought-steps {
+      margin-top: 0.45rem;
+      margin-left: 0.6rem;
+      padding-left: 0.75rem;
+      border-left: 2px solid #e2e8f0;
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
-      position: relative;
+      gap: 0.45rem;
+      font-size: 0.81rem;
+      color: #475569;
+      background: transparent !important;
     }
-    .steps-card.collapsed .steps-body {
+    .inline-thought-container.collapsed .inline-thought-steps {
       display: none;
     }
-    .step-item {
+    .inline-step-row {
       display: flex;
       align-items: flex-start;
-      gap: 0.7rem;
-      position: relative;
+      gap: 0.45rem;
+      line-height: 1.45;
     }
-    /* Vertical connecting stepper line */
-    .step-item:not(:last-child)::after {
-      content: '';
-      position: absolute;
-      left: 7px;
-      top: 18px;
-      bottom: -9px;
-      width: 1px;
-      background: #e2e8f0;
-    }
-    .step-marker {
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .inline-step-dot {
+      font-size: 0.8rem;
+      font-weight: 700;
       flex-shrink: 0;
-      margin-top: 2px;
-      z-index: 1;
+      color: #16a34a;
     }
-    .step-item.pending .step-marker {
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
+    .inline-step-dot.pending {
+      color: #cbd5e1;
     }
-    .step-item.pending .step-spinner,
-    .step-item.pending .step-icon {
-      display: none;
-    }
-    .step-item.active .step-marker {
-      background: #eff6ff;
-    }
-    .step-item.active .step-spinner {
-      display: block;
-      width: 13px;
-      height: 13px;
-      border: 2px solid #bfdbfe;
-      border-top-color: #2563eb;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    .step-item.active .step-icon {
-      display: none;
-    }
-    .step-item.completed .step-marker {
-      background: #16a34a;
-      border: none;
-    }
-    .step-item.completed .step-spinner {
-      display: none;
-    }
-    .step-item.completed .step-icon {
-      display: block;
-      color: #ffffff;
-      font-size: 9px;
-      font-weight: bold;
-      line-height: 1;
-    }
-    .step-text {
-      display: flex;
-      flex-direction: column;
-    }
-    .step-name {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #334155;
-    }
-    .step-item.active .step-name {
+    .inline-step-dot.active {
       color: #2563eb;
     }
-    .step-sub {
-      font-size: 0.74rem;
+    .inline-step-desc {
       color: #64748b;
-      margin-top: 1px;
-      line-height: 1.4;
+      font-size: 0.75rem;
+      margin-left: 0.25rem;
     }
-    .step-sub code {
+    .inline-step-desc code {
       background: #f1f5f9;
       padding: 0.1rem 0.35rem;
       border-radius: 4px;
@@ -584,98 +519,30 @@
       font-size: 0.72rem;
       color: #0f172a;
     }
-    .step-item.pending {
-      opacity: 0.5;
-    }
 
     /* ========================================================
-       2. ANIMATED SEARCHING STATUS (Replaces static "...")
+       LIVE STREAMING CURSOR (ChatGPT / Copilot Style)
        ======================================================== */
-    .searching-status-box {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.55rem 0.95rem;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 20px;
-      margin: 0.4rem 0 0.6rem 0;
-      width: fit-content;
-      animation: fadeIn 0.2s ease;
+    .ai-reply-content {
+      line-height: 1.65;
     }
-    .searching-radar {
-      position: relative;
-      width: 22px;
-      height: 22px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #2563eb;
+    .streaming-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 15px;
+      background: #0f172a;
+      margin-left: 3px;
+      vertical-align: -2px;
+      border-radius: 1px;
+      animation: blinkCursor 0.75s infinite ease-in-out;
     }
-    .search-lens {
-      animation: searchPulse 1.6s ease-in-out infinite;
-    }
-    @keyframes searchPulse {
-      0%, 100% { transform: scale(0.95); opacity: 0.85; }
-      50% { transform: scale(1.1); opacity: 1; }
-    }
-    .radar-ping {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: 2px solid #2563eb;
-      opacity: 0.75;
-      animation: radarRing 1.6s cubic-bezier(0, 0.2, 0.8, 1) infinite;
-    }
-    @keyframes radarRing {
-      0% { transform: scale(0.6); opacity: 0.8; }
-      100% { transform: scale(1.8); opacity: 0; }
-    }
-    .searching-label-wrap {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: #334155;
-    }
-    .searching-label {
-      background: linear-gradient(90deg, #1e293b 0%, #2563eb 50%, #1e293b 100%);
-      background-size: 200% auto;
-      color: transparent;
-      -webkit-background-clip: text;
-      background-clip: text;
-      animation: shimmerText 2.4s linear infinite;
-    }
-    @keyframes shimmerText {
-      to { background-position: 200% center; }
-    }
-    .searching-dots {
-      display: flex;
-      gap: 3.5px;
-      align-items: center;
-    }
-    .searching-dots span {
-      width: 3.5px;
-      height: 3.5px;
-      border-radius: 50%;
-      background-color: #2563eb;
-      animation: dotBounce 1.4s infinite ease-in-out both;
-    }
-    .searching-dots span:nth-child(1) { animation-delay: -0.32s; }
-    .searching-dots span:nth-child(2) { animation-delay: -0.16s; }
-    @keyframes dotBounce {
-      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-      40% { transform: scale(1.2); opacity: 1; }
+    @keyframes blinkCursor {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
     }
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
-    }
-
-    .ai-reply-content {
-      line-height: 1.65;
     }
 
     /* Bottom Docked Input (When in conversation mode) */
@@ -886,7 +753,7 @@
       return div;
     }
 
-    // Dynamic Query Analyzer: Generates customized progressive steps and search animations based on user query
+    // Dynamic Query Analyzer: Generates customized progressive steps based on user query
     function buildDynamicSteps(userQuery) {
       const q = (userQuery || "").toLowerCase().trim();
 
@@ -945,23 +812,19 @@
         steps = [
           {
             name: "Analyzing vehicle catalog request",
-            sub: "Parsing database query for all 38 benchmark models in tbl_features",
-            search: "Parsing catalog inquiry"
+            sub: "Parsing database query for all 38 benchmark models in tbl_features"
           },
           {
             name: "Querying tbl_features database",
-            sub: "Executing `SELECT DISTINCT Vehicle FROM tbl_features`",
-            search: "Querying distinct vehicles"
+            sub: "Executing `SELECT DISTINCT Vehicle FROM tbl_features`"
           },
           {
             name: "Categorizing OEM & Brand segments",
-            sub: "Grouping models across Hyundai, Kia, Tata, Mahindra, Maruti, Renault & Nissan",
-            search: "Categorizing 38 models"
+            sub: "Grouping models across Hyundai, Kia, Tata, Mahindra, Maruti, Renault & Nissan"
           },
           {
             name: "Structuring vehicle catalog",
-            sub: "Formatting complete vehicle list into organized showroom table",
-            search: "Structuring showroom catalog"
+            sub: "Formatting complete vehicle list into organized showroom table"
           }
         ];
       }
@@ -973,23 +836,19 @@
         steps = [
           {
             name: "Analyzing comparative parameters",
-            sub: `Head-to-head comparison: ${v1} vs ${v2} on specifications & segment positioning`,
-            search: `Analyzing ${v1} vs ${v2}`
+            sub: `Head-to-head comparison: ${v1} vs ${v2} on specifications & segment positioning`
           },
           {
             name: "Querying dual records from tbl_features",
-            sub: `Fetching dimensions, ground clearance, ADAS & features for both models`,
-            search: `Querying records for ${v1} & ${v2}`
+            sub: `Fetching dimensions, ground clearance, ADAS & features for both models`
           },
           {
             name: "Benchmarking metric deltas",
-            sub: `Calculating dimension variances, ground clearance deltas & feature parity`,
-            search: "Calculating comparative deltas"
+            sub: `Calculating dimension variances, ground clearance deltas & feature parity`
           },
           {
             name: "Generating comparative matrix",
-            sub: "Structuring side-by-side comparison table highlighting competitor differentiators",
-            search: "Formatting comparison matrix"
+            sub: "Structuring side-by-side comparison table highlighting competitor differentiators"
           }
         ];
       }
@@ -999,23 +858,19 @@
         steps = [
           {
             name: "Analyzing safety & ADAS perimeter",
-            sub: `Target: ${targetLabel} | Scope: ADAS Level 1/2 suite & active safety equipment`,
-            search: `Analyzing ${targetLabel} safety package`
+            sub: `Target: ${targetLabel} | Scope: ADAS Level 1/2 suite & active safety equipment`
           },
           {
             name: "Querying tbl_features (ADAS & Safety)",
-            sub: `Fetching Forward Collision Warning, Lane Keep Assist, Airbag count & ESC for ${targetLabel}`,
-            search: "Querying ADAS & Safety records"
+            sub: `Fetching Forward Collision Warning, Lane Keep Assist, Airbag count & ESC for ${targetLabel}`
           },
           {
             name: "Auditing active safety suite",
-            sub: "Validating radar/camera architecture and standard vs optional safety equipment",
-            search: "Auditing active safety suite"
+            sub: "Validating radar/camera architecture and standard vs optional safety equipment"
           },
           {
             name: "Structuring safety specification",
-            sub: "Compiling verified ADAS feature checklist and safety equipment matrix",
-            search: "Structuring ADAS checklist"
+            sub: "Compiling verified ADAS feature checklist and safety equipment matrix"
           }
         ];
       }
@@ -1025,23 +880,19 @@
         steps = [
           {
             name: "Analyzing commercial volume inquiry",
-            sub: `Target: ${targetLabel} | Scope: September 2026 wholesale dispatch sales`,
-            search: "Analyzing dispatch figures"
+            sub: `Target: ${targetLabel} | Scope: September 2026 wholesale dispatch sales`
           },
           {
             name: "Querying tbl_sales database",
-            sub: `Executing SELECT OEM, Vehicle, Segment, Sep26 FROM tbl_sales`,
-            search: "Querying September 2026 sales"
+            sub: `Executing SELECT OEM, Vehicle, Segment, Sep26 FROM tbl_sales`
           },
           {
             name: "Evaluating OEM wholesale dispatches",
-            sub: "Extracting official wholesale dispatch units and segment market distribution",
-            search: "Evaluating wholesale figures"
+            sub: "Extracting official wholesale dispatch units and segment market distribution"
           },
           {
             name: "Synthesizing market performance",
-            sub: "Reporting verified sales figures, segment ranking & market share",
-            search: "Formatting commercial report"
+            sub: "Reporting verified sales figures, segment ranking & market share"
           }
         ];
       }
@@ -1051,23 +902,19 @@
         steps = [
           {
             name: "Analyzing seating & interior configuration",
-            sub: `Target: ${targetLabel} | Attribute: Cabin seating capacity & row ergonomics`,
-            search: `Checking ${targetLabel} seats`
+            sub: `Target: ${targetLabel} | Attribute: Cabin seating capacity & row ergonomics`
           },
           {
             name: "Querying tbl_features (Seats)",
-            sub: `Retrieving seat count, 2nd row split (40:60), ventilation & 3rd row availability for ${targetLabel}`,
-            search: "Querying cabin seating specifications"
+            sub: `Retrieving seat count, 2nd row split (40:60), ventilation & 3rd row availability for ${targetLabel}`
           },
           {
             name: "Verifying cabin ergonomics",
-            sub: "Validating passenger capacity, backrest recline and bench configuration",
-            search: "Verifying passenger capacity"
+            sub: "Validating passenger capacity, backrest recline and bench configuration"
           },
           {
             name: "Synthesizing interior confirmation",
-            sub: "Formulating verified seating capacity confirmation and row specifications",
-            search: "Formatting seating report"
+            sub: "Formulating verified seating capacity confirmation and row specifications"
           }
         ];
       }
@@ -1077,23 +924,19 @@
         steps = [
           {
             name: "Analyzing vehicle dimensions inquiry",
-            sub: `Target: ${targetLabel} | Attributes: Length, Width, Height, Clearance & Boot Space`,
-            search: `Analyzing ${targetLabel} dimensions`
+            sub: `Target: ${targetLabel} | Attributes: Length, Width, Height, Clearance & Boot Space`
           },
           {
             name: "Querying tbl_features (Specification)",
-            sub: `Retrieving unladen ground clearance, exterior dimensions & boot volume for ${targetLabel}`,
-            search: "Querying specifications from tbl_features"
+            sub: `Retrieving unladen ground clearance, exterior dimensions & boot volume for ${targetLabel}`
           },
           {
             name: "Validating segment measurements",
-            sub: "Cross-checking millimeter measurements against 38 Indian market benchmarks",
-            search: "Validating millimeter measurements"
+            sub: "Cross-checking millimeter measurements against 38 Indian market benchmarks"
           },
           {
             name: "Structuring technical specification",
-            sub: "Compiling verified showroom measurement table with exact values",
-            search: "Formatting dimensions table"
+            sub: "Compiling verified showroom measurement table with exact values"
           }
         ];
       }
@@ -1103,23 +946,19 @@
         steps = [
           {
             name: "Analyzing showroom pricing inquiry",
-            sub: `Target: ${targetLabel} | Parameter: Showroom Price Range in KINR`,
-            search: `Analyzing ${targetLabel} price`
+            sub: `Target: ${targetLabel} | Parameter: Showroom Price Range in KINR`
           },
           {
             name: "Querying tbl_features (Price)",
-            sub: `Retrieving variant price bracket in thousand INR (KINR) for ${targetLabel}`,
-            search: "Querying price records from tbl_features"
+            sub: `Retrieving variant price bracket in thousand INR (KINR) for ${targetLabel}`
           },
           {
             name: "Evaluating segment price competitiveness",
-            sub: "Benchmarking price span against direct competitive alternatives in segment",
-            search: "Evaluating price positioning"
+            sub: "Benchmarking price span against direct competitive alternatives in segment"
           },
           {
             name: "Structuring pricing guidance",
-            sub: "Compiling verified showroom price range in thousand INR (KINR)",
-            search: "Formatting price summary"
+            sub: "Compiling verified showroom price range in thousand INR (KINR)"
           }
         ];
       }
@@ -1129,23 +968,19 @@
         steps = [
           {
             name: "Analyzing powertrain & performance inquiry",
-            sub: `Target: ${targetLabel} | Scope: Engine displacement, power/torque & gearbox`,
-            search: `Analyzing ${targetLabel} powertrain`
+            sub: `Target: ${targetLabel} | Scope: Engine displacement, power/torque & gearbox`
           },
           {
             name: "Querying tbl_features (Powertrain)",
-            sub: `Fetching motor outputs, fuel types, transmission options & battery specs for ${targetLabel}`,
-            search: "Querying powertrain data"
+            sub: `Fetching motor outputs, fuel types, transmission options & battery specs for ${targetLabel}`
           },
           {
             name: "Auditing drivetrain specifications",
-            sub: "Validating performance output curves against showroom segment rivals",
-            search: "Auditing performance figures"
+            sub: "Validating performance output curves against showroom segment rivals"
           },
           {
             name: "Structuring technical performance matrix",
-            sub: "Formatting engine options, horsepower, torque & transmission choices",
-            search: "Formatting performance report"
+            sub: "Formatting engine options, horsepower, torque & transmission choices"
           }
         ];
       }
@@ -1155,23 +990,19 @@
         steps = [
           {
             name: "Analyzing equipment & comfort inquiry",
-            sub: `Target: ${targetLabel} | Perimeter: Comfort & Convenience / HMI equipment`,
-            search: `Analyzing ${targetLabel} features`
+            sub: `Target: ${targetLabel} | Perimeter: Comfort & Convenience / HMI equipment`
           },
           {
             name: "Querying tbl_features (Comfort & HMI)",
-            sub: `Retrieving sunroof, infotainment screen size, wireless connectivity & audio package for ${targetLabel}`,
-            search: "Querying features from tbl_features"
+            sub: `Retrieving sunroof, infotainment screen size, wireless connectivity & audio package for ${targetLabel}`
           },
           {
             name: "Evaluating showroom feature presence",
-            sub: "Validating standard vs optional equipment across model trim grades",
-            search: "Evaluating feature availability"
+            sub: "Validating standard vs optional equipment across model trim grades"
           },
           {
             name: "Structuring equipment overview",
-            sub: "Compiling verified convenience & technology features table",
-            search: "Formatting equipment checklist"
+            sub: "Compiling verified convenience & technology features table"
           }
         ];
       }
@@ -1182,23 +1013,19 @@
         steps = [
           {
             name: "Understanding automotive inquiry",
-            sub: `Processing "${summaryQ}"`,
-            search: "Understanding inquiry context"
+            sub: `Processing "${summaryQ}"`
           },
           {
             name: "Querying db_imi database",
-            sub: "Searching verified tables (tbl_features & tbl_sales) for matching context",
-            search: "Querying database records"
+            sub: "Searching verified tables (tbl_features & tbl_sales) for matching context"
           },
           {
             name: "Cross-referencing 38 benchmark models",
-            sub: "Filtering OEM verified specifications and showroom competitor data",
-            search: "Filtering verified data"
+            sub: "Filtering OEM verified specifications and showroom competitor data"
           },
           {
             name: "Synthesizing market intelligence",
-            sub: "Formulating structured, verified guidance for showroom sales consultants",
-            search: "Formulating verified guidance"
+            sub: "Formulating structured, verified guidance for showroom sales consultants"
           }
         ];
       }
@@ -1206,7 +1033,7 @@
       return { steps, initialSearchLabel: searchLabel };
     }
 
-    // Creates active progressive steps card & live searching animation for ongoing query
+    // Creates single-line, transparent inline thought process (hidden/collapsed by default)
     function createProgressiveModelMessage(userQuery) {
       const wrap = document.createElement('div');
       wrap.className = 'msg-wrap';
@@ -1219,116 +1046,77 @@
       const stepsData = dynamicInfo.steps;
 
       div.innerHTML = `
-        <!-- Copilot Progressive Background Steps Card -->
-        <div class="steps-card">
-          <div class="steps-header" onclick="this.closest('.steps-card').classList.toggle('collapsed')">
-            <div class="steps-header-left">
-              <span class="status-indicator-spinner"></span>
-              <span class="steps-header-title">Working on response</span>
-            </div>
-            <div class="steps-header-right">
-              <span class="steps-count-badge">Step 1 of 4</span>
-              <span class="steps-chevron">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              </span>
-            </div>
+        <!-- Single-Line Thought Process (Antigravity Style: Transparent, Collapsed by default) -->
+        <div class="inline-thought-container collapsed">
+          <div class="inline-thought-header" onclick="this.closest('.inline-thought-container').classList.toggle('collapsed')">
+            <span class="thought-chevron">▾</span>
+            <span class="thought-live-spinner"></span>
+            <span class="thought-summary-label">${DOMPurify.sanitize(dynamicInfo.initialSearchLabel)}</span>
           </div>
-          <div class="steps-body">
-            <div class="step-item active" data-step="1">
-              <div class="step-marker">
-                <span class="step-spinner"></span>
-                <span class="step-icon">✓</span>
-              </div>
-              <div class="step-text">
-                <div class="step-name">${DOMPurify.sanitize(stepsData[0].name)}</div>
-                <div class="step-sub">${DOMPurify.sanitize(stepsData[0].sub)}</div>
+          <div class="inline-thought-steps">
+            <div class="inline-step-row" data-step="1">
+              <span class="inline-step-dot active">●</span>
+              <div>
+                <b>${DOMPurify.sanitize(stepsData[0].name)}:</b>
+                <span class="inline-step-desc">${DOMPurify.sanitize(stepsData[0].sub)}</span>
               </div>
             </div>
-
-            <div class="step-item pending" data-step="2">
-              <div class="step-marker">
-                <span class="step-spinner"></span>
-                <span class="step-icon">✓</span>
-              </div>
-              <div class="step-text">
-                <div class="step-name">${DOMPurify.sanitize(stepsData[1].name)}</div>
-                <div class="step-sub">${DOMPurify.sanitize(stepsData[1].sub)}</div>
+            <div class="inline-step-row" data-step="2">
+              <span class="inline-step-dot pending">○</span>
+              <div>
+                <b>${DOMPurify.sanitize(stepsData[1].name)}:</b>
+                <span class="inline-step-desc">${DOMPurify.sanitize(stepsData[1].sub)}</span>
               </div>
             </div>
-
-            <div class="step-item pending" data-step="3">
-              <div class="step-marker">
-                <span class="step-spinner"></span>
-                <span class="step-icon">✓</span>
-              </div>
-              <div class="step-text">
-                <div class="step-name">${DOMPurify.sanitize(stepsData[2].name)}</div>
-                <div class="step-sub">${DOMPurify.sanitize(stepsData[2].sub)}</div>
+            <div class="inline-step-row" data-step="3">
+              <span class="inline-step-dot pending">○</span>
+              <div>
+                <b>${DOMPurify.sanitize(stepsData[2].name)}:</b>
+                <span class="inline-step-desc">${DOMPurify.sanitize(stepsData[2].sub)}</span>
               </div>
             </div>
-
-            <div class="step-item pending" data-step="4">
-              <div class="step-marker">
-                <span class="step-spinner"></span>
-                <span class="step-icon">✓</span>
-              </div>
-              <div class="step-text">
-                <div class="step-name">${DOMPurify.sanitize(stepsData[3].name)}</div>
-                <div class="step-sub">${DOMPurify.sanitize(stepsData[3].sub)}</div>
+            <div class="inline-step-row" data-step="4">
+              <span class="inline-step-dot pending">○</span>
+              <div>
+                <b>${DOMPurify.sanitize(stepsData[3].name)}:</b>
+                <span class="inline-step-desc">${DOMPurify.sanitize(stepsData[3].sub)}</span>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Animated Searching Indicator (Replaces plain "...") -->
-        <div class="searching-status-box">
-          <div class="searching-radar">
-            <svg class="search-lens" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <span class="radar-ping"></span>
-          </div>
-          <div class="searching-label-wrap">
-            <span class="searching-label">${DOMPurify.sanitize(dynamicInfo.initialSearchLabel)}</span>
-            <span class="searching-dots">
-              <span></span><span></span><span></span>
-            </span>
-          </div>
-        </div>
-
-        <!-- AI Streaming Answer Markdown Container -->
-        <div class="ai-reply-content"></div>
+        <!-- AI Real-Time Streaming Answer Markdown Container with Live Cursor -->
+        <div class="ai-reply-content"><span class="streaming-cursor"></span></div>
       `;
 
       wrap.appendChild(div);
       chatList.appendChild(wrap);
       chatList.scrollTop = chatList.scrollHeight;
 
-      const stepsCard = div.querySelector('.steps-card');
-      const countBadge = div.querySelector('.steps-count-badge');
-      const searchingBox = div.querySelector('.searching-status-box');
-      const searchingLabel = div.querySelector('.searching-label');
+      const thoughtContainer = div.querySelector('.inline-thought-container');
+      const thoughtSpinner = div.querySelector('.thought-live-spinner');
+      const thoughtLabel = div.querySelector('.thought-summary-label');
       const replyContent = div.querySelector('.ai-reply-content');
-      const stepItems = div.querySelectorAll('.step-item');
-      const statusSpinner = div.querySelector('.status-indicator-spinner');
-      const headerTitle = div.querySelector('.steps-header-title');
+      const stepRows = div.querySelectorAll('.inline-step-row');
 
       function setStep(stepNum) {
-        stepItems.forEach(item => {
+        stepRows.forEach(item => {
           const s = parseInt(item.getAttribute('data-step'));
+          const dot = item.querySelector('.inline-step-dot');
           if (s < stepNum) {
-            item.className = 'step-item completed';
+            dot.className = 'inline-step-dot completed';
+            dot.textContent = '✓';
           } else if (s === stepNum) {
-            item.className = 'step-item active';
+            dot.className = 'inline-step-dot active';
+            dot.textContent = '●';
           } else {
-            item.className = 'step-item pending';
+            dot.className = 'inline-step-dot pending';
+            dot.textContent = '○';
           }
         });
 
-        countBadge.textContent = `Step ${stepNum} of 4`;
         if (stepsData[stepNum - 1]) {
-          searchingLabel.textContent = stepsData[stepNum - 1].search;
+          thoughtLabel.textContent = stepsData[stepNum - 1].name + '...';
         }
       }
 
@@ -1340,19 +1128,21 @@
         clearTimeout(t1);
         clearTimeout(t2);
         clearTimeout(t3);
-        stepItems.forEach(item => item.className = 'step-item completed');
-        statusSpinner.classList.add('done');
-        headerTitle.textContent = '4 background steps completed';
-        countBadge.textContent = 'Done';
-        searchingBox.style.display = 'none';
-        stepsCard.classList.add('collapsed');
+        stepRows.forEach(item => {
+          const dot = item.querySelector('.inline-step-dot');
+          dot.className = 'inline-step-dot completed';
+          dot.textContent = '✓';
+        });
+        thoughtSpinner.classList.add('done');
+        thoughtLabel.textContent = 'Thought process (4 steps completed)';
+        thoughtContainer.classList.add('collapsed');
       }
 
       // Live SQL updater from server SSE (if available)
       function updateStepSql(sql, count) {
-        const step2Sub = div.querySelector('.step-item[data-step="2"] .step-sub');
-        if (step2Sub && sql) {
-          step2Sub.innerHTML = `Executed: <code>${DOMPurify.sanitize(sql)}</code> (${count || 0} records fetched)`;
+        const step2Desc = div.querySelector('.inline-step-row[data-step="2"] .inline-step-desc');
+        if (step2Desc && sql) {
+          step2Desc.innerHTML = `Executed: <code>${DOMPurify.sanitize(sql)}</code> (${count || 0} records fetched)`;
         }
       }
 
@@ -1422,7 +1212,7 @@
       heroSendBtn.disabled = true;
       dockSendBtn.disabled = true;
 
-      // Initialize Progressive Background Steps & Live Searching Animation
+      // Initialize Single-Line Progressive Thought & Live Streaming Response
       const { wrap, div, replyContent, finishSteps, updateStepSql } = createProgressiveModelMessage(text);
       let fullReply = "";
       let hasStartedStreaming = false;
@@ -1467,7 +1257,8 @@
                     finishSteps();
                   }
                   fullReply += chunkText;
-                  replyContent.innerHTML = renderMarkdown(fullReply);
+                  // Live Token-by-Token Streaming with Active Blinking Cursor
+                  replyContent.innerHTML = renderMarkdown(fullReply) + '<span class="streaming-cursor"></span>';
                   chatList.scrollTop = chatList.scrollHeight;
                 }
               } catch (parseErr) {}
@@ -1476,6 +1267,8 @@
         }
 
         finishSteps();
+        // Finalize streaming output (remove blinking cursor)
+        replyContent.innerHTML = renderMarkdown(fullReply);
         currentThread.messages.push({ role: "model", parts: [{ text: fullReply }] });
         saveThreads();
 
