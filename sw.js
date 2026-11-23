@@ -1,10 +1,14 @@
-// IMI Copilot Service Worker - Version 2.1.0
-const CACHE_NAME = 'imi-copilot-cache-v2.1';
+// IMI Copilot Service Worker - Version 2.3.1
+const CACHE_NAME = 'imi-copilot-cache-v2.3.1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
   './renault_logo.png',
+  './RG_RENAULT_GROUP_LOGOTYPE_WHITE_RGB_v21_1.png',
+  './Features.jpg',
+  './Sales Figure.jpg',
+  './Fuel Economy.jpg',
   './icon.png'
 ];
 
