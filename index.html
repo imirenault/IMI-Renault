@@ -540,6 +540,32 @@
     }
     .msg.model tr:last-child td { border-bottom: none; }
     .msg.model tr:nth-child(even) td { background: #fafafa; }
+    .msg.model blockquote {
+      margin: 1rem 0 0.5rem 0;
+      padding: 0.85rem 1.15rem;
+      background: #f8fafc;
+      border-left: 4px solid #4f46e5;
+      border-radius: 8px;
+      color: #1e293b;
+    }
+    .msg.model blockquote h3 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      color: #1e1b4b;
+      font-size: 0.95rem;
+    }
+    .msg.model blockquote ul {
+      margin: 0.4rem 0;
+      padding-left: 1.2rem;
+    }
+    .msg.model blockquote li {
+      margin-bottom: 0.35rem;
+      cursor: pointer;
+      transition: color 0.15s ease;
+    }
+    .msg.model blockquote li:hover {
+      color: #4f46e5;
+    }
     .msg.model ul, .msg.model ol { padding-left: 1.25rem; margin: 0.5rem 0; }
     .msg.model li { margin-bottom: 0.35rem; }
 
@@ -891,6 +917,7 @@
           <!-- Suggested Prompt Chips (Text Only - Pastes directly into chat input without auto-sending) -->
           <div class="suggested-prompts">
             <button class="prompt-chip" type="button" onclick="pastePrompt('What are the dimensions, boot space, and price range of Renault Kiger?')">Kiger Specs</button>
+            <button class="prompt-chip" type="button" onclick="pastePrompt('What is the fuel efficiency and mileage of Maruti Brezza across Petrol and CNG?')">Brezza Mileage</button>
             <button class="prompt-chip" type="button" onclick="pastePrompt('What is the complete ADAS specification of Renault Duster?')">ADAS of Duster</button>
             <button class="prompt-chip" type="button" onclick="pastePrompt('Compare Renault Duster and Hyundai Creta on dimensions and ground clearance')">Duster vs Creta</button>
             <button class="prompt-chip" type="button" onclick="pastePrompt('List of vehicles available in India Market Intelligence?')">Available vehicles</button>
@@ -985,6 +1012,7 @@
 
     let threads = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
     let activeThreadId = threads[0]?.id || null;
+    let activeAbortController = null;
     let threadPendingDelete = null;
 
     function saveThreads() {
@@ -1034,6 +1062,10 @@
     }
 
     function handleNewChat() {
+      if (activeAbortController) {
+        try { activeAbortController.abort(); } catch (_) {}
+        activeAbortController = null;
+      }
       // 1. If currently active chat is already an empty new chat, just stay and focus
       const currentThread = threads.find(t => t.id === activeThreadId);
       if (currentThread && (!currentThread.messages || currentThread.messages.length === 0)) {
@@ -1168,6 +1200,10 @@
     }
 
     function switchThread(id) {
+      if (activeAbortController) {
+        try { activeAbortController.abort(); } catch (_) {}
+        activeAbortController = null;
+      }
       activeThreadId = id;
       renderSidebar();
       renderActiveChat();
@@ -1314,8 +1350,32 @@
       let searchLabel = "Analyzing inquiry";
       let steps = [];
 
+      const isGreeting = /^(hi|hello|hey|greetings|good\s*(morning|afternoon|evening)|namaste|start|who\s*are\s*you|help)$/i.test(q.replace(/[!.,?]+$/, ''));
+
+      // 0. General Greetings & Conversation Start
+      if (isGreeting) {
+        searchLabel = "Welcome to IMI Copilot";
+        steps = [
+          {
+            name: "Connecting to India Market Intelligence",
+            sub: "Initializing competitor intelligence engine"
+          },
+          {
+            name: "Loading 30 Competition Vehicles",
+            sub: "Benchmarking 15 Gold and 15 Silver competitors across 6 Renault segments"
+          },
+          {
+            name: "D1 Intelligence Database Ready",
+            sub: "tbl_features, tbl_sales (Sep-26), and tbl_fuel_efficiency ready"
+          },
+          {
+            name: "Ready for inquiry",
+            sub: "Ask about ADAS, dimensions, fuel economy, sales volumes or head-to-head comparisons"
+          }
+        ];
+      }
       // 1. Catalog / List All Vehicles in Database
-      if (isCatalog) {
+      else if (isCatalog) {
         searchLabel = "Scanning vehicle catalog in tbl_features";
         steps = [
           {
@@ -1694,6 +1754,17 @@
 
     newChatBtn.addEventListener('click', handleNewChat);
 
+    // Clicking sample queries inside welcome blockquote pastes them directly into chat
+    chatList.addEventListener('click', (e) => {
+      const quoteLi = e.target.closest('li');
+      if (quoteLi && quoteLi.closest('blockquote')) {
+        const textMatch = quoteLi.textContent.match(/"([^"]+)"/);
+        if (textMatch && textMatch[1]) {
+          pastePrompt(textMatch[1]);
+        }
+      }
+    });
+
     // Clean up duplicate empty threads from previous sessions so only 1 empty new chat exists
     let seenEmpty = false;
     threads = threads.filter(t => {
@@ -1740,16 +1811,77 @@
       heroSendBtn.disabled = true;
       dockSendBtn.disabled = true;
 
+      if (activeAbortController) {
+        try { activeAbortController.abort(); } catch (_) {}
+      }
+      activeAbortController = new AbortController();
+
       // Initialize Single-Line Progressive Thought & Live Streaming Response
       const { wrap, div, replyContent, finishSteps, updateStepSql } = createProgressiveModelMessage(text);
       let fullReply = "";
       let hasStartedStreaming = false;
 
+      // Local / Offline Greeting & Conversation Start Handler (Welcome to IMI)
+      const cleanUserMsg = text.trim().replace(/[!.,?]+$/, '').toLowerCase();
+      const isGreeting = /^(hi|hello|hey|greetings|good\s*(morning|afternoon|evening)|namaste|start|who\s*are\s*you|help)$/i.test(cleanUserMsg);
+
+      if (isGreeting) {
+        const welcomeChunks = [
+          `# Welcome to IMI\n**<span style="color: #4f46e5;">Your Competitor Intelligence. One Question Away.</span>**\nExplore Gold & Silver competitors across the Indian automotive market.\n\n---\n\n`,
+          `### OUR COMPETITION - 30 VEHICLES\n\n`,
+          `| Segment & Model | 🥇 15 GOLD | 🥈 15 SILVER |\n| :--- | :--- | :--- |\n`,
+          `| **Kwid**<br><small style="color: #64748b;">A Hatch</small> | Maruti Alto K10 • Maruti S-Presso | Tata Tiago |\n`,
+          `| **Kiger**<br><small style="color: #64748b;">B SUV</small> | Tata Punch • Hyundai Exter • Nissan Magnite | Maruti Fronx |\n`,
+          `| **Triber**<br><small style="color: #64748b;">B MPV</small> | Maruti Ertiga | KIA Carens • Nissan Gravite |\n`,
+          `| **Bridger**<br><small style="color: #64748b;">B SUV</small> | Hyundai Venue • KIA Syros • Tata Nexon • Maruti Brezza | Mahindra 3XO • KIA Sonet • Skoda Kylaq • Fronx |\n`,
+          `| **Duster**<br><small style="color: #64748b;">B+ SUV</small> | Hyundai Creta • KIA Seltos • Maruti Victoris • Toyota Hyryder | Tata Sierra • Honda Elevate • VW Taigun • Hyundai Bayon |\n`,
+          `| **Boreal**<br><small style="color: #64748b;">C SUV</small> | Hyundai Alcazar | Toyota Hycross • Mahindra 7XO • Maruti Ertiga |\n\n---\n\n`,
+          `> ### 💭 JUST ASK IMI\n`,
+          `> - *"Does Hyundai Venue have Adaptive Cruise Control?"*\n`,
+          `> - *"Compare Tata Punch and Citroën C3."*\n`,
+          `> - *"Show me teardown information for Suzuki Grand Vitara."*\n`,
+          `> - *"Compare Duster with its Gold competitors."*\n>\n`,
+          `> 👉 **<span style="color: #4f46e5;">From features to teardown insights.</span>**\n`
+        ];
+
+        // Give a brief moment for the greeting steps to animate, then stream response
+        setTimeout(async () => {
+          finishSteps();
+          for (const chunk of welcomeChunks) {
+            fullReply += chunk;
+            replyContent.innerHTML = renderMarkdown(fullReply) + '<span class="streaming-cursor"></span>';
+            chatList.scrollTop = chatList.scrollHeight;
+            await new Promise(r => setTimeout(r, 35));
+          }
+
+          replyContent.innerHTML = renderMarkdown(fullReply);
+          currentThread.messages.push({ role: "model", parts: [{ text: fullReply }] });
+          saveThreads();
+
+          const actions = document.createElement('div');
+          actions.className = 'msg-actions';
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'action-btn';
+          copyBtn.innerHTML = 'Copy';
+          copyBtn.onclick = () => copyToClipboard(fullReply, copyBtn);
+          actions.appendChild(copyBtn);
+          wrap.appendChild(actions);
+
+          heroSendBtn.disabled = false;
+          dockSendBtn.disabled = false;
+          dockInput.value = '';
+          dockInput.focus();
+        }, 600);
+
+        return;
+      }
+
       try {
         const response = await fetch(WORKER_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ contents: currentThread.messages })
+          body: JSON.stringify({ contents: currentThread.messages }),
+          signal: activeAbortController.signal
         });
 
         if (!response.ok) {
@@ -1812,8 +1944,13 @@
 
       } catch (err) {
         finishSteps();
+        if (err.name === 'AbortError') {
+          console.log('Stream request aborted by navigation');
+          return;
+        }
         replyContent.innerHTML = `⚠️ **Notice**: ${err.message}. Please check connection.`;
       } finally {
+        activeAbortController = null;
         heroSendBtn.disabled = false;
         dockSendBtn.disabled = false;
         dockInput.value = '';
