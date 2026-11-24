@@ -1,5 +1,5 @@
 // IMI Copilot Service Worker - Version 2.3.1
-const CACHE_NAME = 'imi-copilot-cache-v2.3.3';
+const CACHE_NAME = 'imi-copilot-cache-v2.3.4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

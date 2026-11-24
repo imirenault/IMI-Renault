@@ -435,6 +435,18 @@
       flex-shrink: 0;
     }
     .input-send-btn:hover { background: #2563eb; }
+    .input-send-btn.stop-mode {
+      background: #ef4444 !important;
+      color: #ffffff !important;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+      transition: all 0.2s ease;
+    }
+    .input-send-btn.stop-mode:hover {
+      background: #dc2626 !important;
+      transform: scale(1.08);
+    }
     .input-send-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
 
     /* Suggested Prompt Chips (Pure text, No icons) */
@@ -1013,6 +1025,28 @@
     let threads = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
     let activeThreadId = threads[0]?.id || null;
     let activeAbortController = null;
+    let isStreaming = false;
+
+    function setStreamingState(streaming) {
+      isStreaming = streaming;
+      if (streaming) {
+        dockSendBtn.innerHTML = '⏹';
+        dockSendBtn.title = 'Stop generating';
+        dockSendBtn.classList.add('stop-mode');
+        heroSendBtn.innerHTML = '⏹';
+        heroSendBtn.title = 'Stop generating';
+        heroSendBtn.classList.add('stop-mode');
+      } else {
+        dockSendBtn.innerHTML = '➔';
+        dockSendBtn.title = 'Send message';
+        dockSendBtn.classList.remove('stop-mode');
+        heroSendBtn.innerHTML = '➔';
+        heroSendBtn.title = 'Send message';
+        heroSendBtn.classList.remove('stop-mode');
+      }
+      heroSendBtn.disabled = false;
+      dockSendBtn.disabled = false;
+    }
     let threadPendingDelete = null;
 
     function saveThreads() {
@@ -1808,8 +1842,7 @@
       currentThread.messages.push({ role: "user", parts: [{ text }] });
       saveThreads();
 
-      heroSendBtn.disabled = true;
-      dockSendBtn.disabled = true;
+      setStreamingState(true);
 
       if (activeAbortController) {
         try { activeAbortController.abort(); } catch (_) {}
@@ -1945,14 +1978,26 @@
       } catch (err) {
         finishSteps();
         if (err.name === 'AbortError') {
-          console.log('Stream request aborted by navigation');
+          console.log('Generation stopped by user');
+          replyContent.innerHTML = renderMarkdown(fullReply);
+          if (fullReply) {
+            currentThread.messages.push({ role: "model", parts: [{ text: fullReply }] });
+            saveThreads();
+            const actions = document.createElement('div');
+            actions.className = 'msg-actions';
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'action-btn';
+            copyBtn.innerHTML = 'Copy';
+            copyBtn.onclick = () => copyToClipboard(fullReply, copyBtn);
+            actions.appendChild(copyBtn);
+            wrap.appendChild(actions);
+          }
           return;
         }
         replyContent.innerHTML = `⚠️ **Notice**: ${err.message}. Please check connection.`;
       } finally {
         activeAbortController = null;
-        heroSendBtn.disabled = false;
-        dockSendBtn.disabled = false;
+        setStreamingState(false);
         dockInput.value = '';
         dockInput.focus();
       }
@@ -1960,6 +2005,14 @@
 
     heroForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      if (isStreaming) {
+        if (activeAbortController) {
+          try { activeAbortController.abort(); } catch (_) {}
+          activeAbortController = null;
+        }
+        setStreamingState(false);
+        return;
+      }
       const val = heroInput.value.trim();
       heroInput.value = '';
       handleUserSubmit(val);
@@ -1967,6 +2020,14 @@
 
     dockForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      if (isStreaming) {
+        if (activeAbortController) {
+          try { activeAbortController.abort(); } catch (_) {}
+          activeAbortController = null;
+        }
+        setStreamingState(false);
+        return;
+      }
       const val = dockInput.value.trim();
       dockInput.value = '';
       handleUserSubmit(val);
