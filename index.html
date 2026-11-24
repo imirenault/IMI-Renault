@@ -436,15 +436,16 @@
     }
     .input-send-btn:hover { background: #2563eb; }
     .input-send-btn.stop-mode {
-      background: #ef4444 !important;
+      background: #dc2626 !important;
       color: #ffffff !important;
       font-size: 0.95rem;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
-      transition: all 0.2s ease;
+      cursor: pointer !important;
+      pointer-events: auto !important;
+      box-shadow: 0 2px 10px rgba(220, 38, 38, 0.45);
+      transition: all 0.15s ease;
     }
     .input-send-btn.stop-mode:hover {
-      background: #dc2626 !important;
+      background: #b91c1c !important;
       transform: scale(1.08);
     }
     .input-send-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
@@ -1027,25 +1028,40 @@
     let activeAbortController = null;
     let isStreaming = false;
 
+    const SEND_ICON_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+    const STOP_ICON_SVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="#ffffff"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>`;
+
     function setStreamingState(streaming) {
       isStreaming = streaming;
       if (streaming) {
-        dockSendBtn.innerHTML = '⏹';
+        dockSendBtn.innerHTML = STOP_ICON_SVG;
         dockSendBtn.title = 'Stop generating';
         dockSendBtn.classList.add('stop-mode');
-        heroSendBtn.innerHTML = '⏹';
+        heroSendBtn.innerHTML = STOP_ICON_SVG;
         heroSendBtn.title = 'Stop generating';
         heroSendBtn.classList.add('stop-mode');
+        dockInput.removeAttribute('required');
+        heroInput.removeAttribute('required');
       } else {
-        dockSendBtn.innerHTML = '➔';
+        dockSendBtn.innerHTML = SEND_ICON_SVG;
         dockSendBtn.title = 'Send message';
         dockSendBtn.classList.remove('stop-mode');
-        heroSendBtn.innerHTML = '➔';
+        heroSendBtn.innerHTML = SEND_ICON_SVG;
         heroSendBtn.title = 'Send message';
         heroSendBtn.classList.remove('stop-mode');
+        dockInput.setAttribute('required', '');
+        heroInput.setAttribute('required', '');
       }
       heroSendBtn.disabled = false;
       dockSendBtn.disabled = false;
+    }
+
+    function abortCurrentQuery() {
+      if (activeAbortController) {
+        try { activeAbortController.abort(); } catch (_) {}
+        activeAbortController = null;
+      }
+      setStreamingState(false);
     }
     let threadPendingDelete = null;
 
@@ -1086,6 +1102,7 @@
 
     /* Thread Management: Only One New Chat At A Time */
     function createThread() {
+      abortCurrentQuery();
       const newThread = { id: Date.now().toString(), title: "New chat", messages: [] };
       threads.unshift(newThread);
       activeThreadId = newThread.id;
@@ -1096,10 +1113,7 @@
     }
 
     function handleNewChat() {
-      if (activeAbortController) {
-        try { activeAbortController.abort(); } catch (_) {}
-        activeAbortController = null;
-      }
+      abortCurrentQuery();
       // 1. If currently active chat is already an empty new chat, just stay and focus
       const currentThread = threads.find(t => t.id === activeThreadId);
       if (currentThread && (!currentThread.messages || currentThread.messages.length === 0)) {
@@ -1234,10 +1248,7 @@
     }
 
     function switchThread(id) {
-      if (activeAbortController) {
-        try { activeAbortController.abort(); } catch (_) {}
-        activeAbortController = null;
-      }
+      abortCurrentQuery();
       activeThreadId = id;
       renderSidebar();
       renderActiveChat();
@@ -1331,291 +1342,15 @@
       return div;
     }
 
-    // Dynamic Query Analyzer: Generates customized progressive steps based on user query
+    /* Dynamic Query Analyzer: Generates clean, consistent progressive steps for ALL queries */
     function buildDynamicSteps(userQuery) {
-      const q = (userQuery || "").toLowerCase().trim();
-
-      const catalog = [
-        { name: "Hyundai Venue", oem: "Hyundai", rx: /\bvenue\b/i },
-        { name: "Hyundai Creta", oem: "Hyundai", rx: /\bcreta\b/i },
-        { name: "Hyundai Exter", oem: "Hyundai", rx: /\bexter\b/i },
-        { name: "Hyundai Alcazar", oem: "Hyundai", rx: /\balcazar\b/i },
-        { name: "Hyundai Bayon", oem: "Hyundai", rx: /\bbayon\b/i },
-        { name: "Kia Sonet", oem: "Kia", rx: /\bsonet\b/i },
-        { name: "Kia Seltos", oem: "Kia", rx: /\bseltos\b/i },
-        { name: "Kia Syros", oem: "Kia", rx: /\bsyros\b/i },
-        { name: "Kia Carens", oem: "Kia", rx: /\bcarens|clavis\b/i },
-        { name: "Tata Nexon", oem: "Tata", rx: /\bnexon\b/i },
-        { name: "Tata Punch", oem: "Tata", rx: /\bpunch\b/i },
-        { name: "Tata Sierra", oem: "Tata", rx: /\bsierra\b/i },
-        { name: "Mahindra 3XO", oem: "Mahindra", rx: /\b3xo|xuv300\b/i },
-        { name: "Mahindra 7XO", oem: "Mahindra", rx: /\b7xo|xuv700\b/i },
-        { name: "Mahindra Thar", oem: "Mahindra", rx: /\bthar\b/i },
-        { name: "Maruti Brezza", oem: "Maruti Suzuki", rx: /\bbrezza\b/i },
-        { name: "Maruti Fronx", oem: "Maruti Suzuki", rx: /\bfronx\b/i },
-        { name: "Maruti Grand Vitara", oem: "Maruti Suzuki", rx: /\bgrand\s*vitara|grandvitara\b/i },
-        { name: "Maruti Ertiga", oem: "Maruti Suzuki", rx: /\bertiga\b/i },
-        { name: "Renault Duster", oem: "Renault", rx: /\bduster\b/i },
-        { name: "Renault Kiger", oem: "Renault", rx: /\bkiger\b/i },
-        { name: "Renault Triber", oem: "Renault", rx: /\btriber\b/i },
-        { name: "Renault Kwid", oem: "Renault", rx: /\bkwid\b/i },
-        { name: "Nissan Magnite", oem: "Nissan", rx: /\bmagnite\b/i },
-        { name: "Nissan Gravite", oem: "Nissan", rx: /\bgravite\b/i },
-        { name: "Skoda Kylaq", oem: "Skoda", rx: /\bkylaq\b/i },
-        { name: "Volkswagen Taigun", oem: "Volkswagen", rx: /\btaigun\b/i },
-        { name: "Honda Elevate", oem: "Honda", rx: /\belevate\b/i },
-        { name: "Toyota Hyryder", oem: "Toyota", rx: /\bhyryder\b/i },
-        { name: "Toyota Innova", oem: "Toyota", rx: /\binnova\b/i },
-        { name: "MG Windsor", oem: "MG", rx: /\bwindsor\b/i }
-      ];
-
-      const matched = catalog.filter(c => c.rx.test(userQuery));
-      const isCatalog = /\b(list\s*all|all\s*the\s*vehicles|vehicles\s*in|what\s*vehicles|what\s*cars|show\s*all|catalog|38\s*vehicles|38\s*benchmark|all\s*models|which\s*vehicles|database)\b/i.test(q) && (matched.length === 0 || /\b(list|all)\b/i.test(q));
-      const isComparison = (matched.length >= 2) || /\b(compare|vs|versus|difference|better)\b/i.test(q);
-      const isSales = /\b(sales|units|dispatched|dispatch|volume|sep26|september|dispatches|market\s*share|sold)\b/i.test(q);
-      const isADAS = /\b(adas|safety|airbag|airbags|collision|lane|acc|sensor|blind\s*spot|esp|abs)\b/i.test(q);
-      const isSeats = /\b(seat|seats|seater|seating|row|ventilated|reclining)\b/i.test(q);
-      const isPrice = /\b(price|pricing|cost|budget|kinr|lakh|lakhs|variant|variants|ex\s*showroom)\b/i.test(q);
-      const isSpecs = /\b(dimension|dimensions|length|width|height|wheelbase|ground\s*clearance|clearance|boot|bootspace|boot\s*space|turning\s*radius|weight|spec|specs|specification|specifications)\b/i.test(q);
-      const isPowertrain = /\b(engine|power|torque|turbo|petrol|diesel|transmission|gearbox|automatic|manual|mileage|fuel|ev|battery|range)\b/i.test(q);
-      const isComfort = /\b(sunroof|touchscreen|screen|infotainment|audio|speaker|wireless|carplay|android|ac|climate|cruise)\b/i.test(q);
-
-      let targetLabel = matched.length > 0 ? matched.map(m => m.name).join(" & ") : "Benchmark Vehicles";
-      let searchLabel = "Analyzing inquiry";
-      let steps = [];
-
-      const isGreeting = /^(hi|hello|hey|greetings|good\s*(morning|afternoon|evening)|namaste|start|who\s*are\s*you|help)$/i.test(q.replace(/[!.,?]+$/, ''));
-
-      // 0. General Greetings & Conversation Start
-      if (isGreeting) {
-        searchLabel = "Welcome to IMI Copilot";
-        steps = [
-          {
-            name: "Connecting to India Market Intelligence",
-            sub: "Initializing competitor intelligence engine"
-          },
-          {
-            name: "Loading 30 Competition Vehicles",
-            sub: "Benchmarking 15 Gold and 15 Silver competitors across 6 Renault segments"
-          },
-          {
-            name: "D1 Intelligence Database Ready",
-            sub: "tbl_features, tbl_sales (Sep-26), and tbl_fuel_efficiency ready"
-          },
-          {
-            name: "Ready for inquiry",
-            sub: "Ask about ADAS, dimensions, fuel economy, sales volumes or head-to-head comparisons"
-          }
-        ];
-      }
-      // 1. Catalog / List All Vehicles in Database
-      else if (isCatalog) {
-        searchLabel = "Scanning vehicle catalog in tbl_features";
-        steps = [
-          {
-            name: "Analyzing vehicle catalog request",
-            sub: "Parsing database query for all 38 benchmark models in tbl_features"
-          },
-          {
-            name: "Querying tbl_features database",
-            sub: "Executing `SELECT DISTINCT Vehicle FROM tbl_features`"
-          },
-          {
-            name: "Categorizing OEM & Brand segments",
-            sub: "Grouping models across Hyundai, Kia, Tata, Mahindra, Maruti, Renault & Nissan"
-          },
-          {
-            name: "Structuring vehicle catalog",
-            sub: "Formatting complete vehicle list into organized showroom table"
-          }
-        ];
-      }
-      // 2. Head-to-Head Comparison
-      else if (isComparison) {
-        const v1 = matched[0]?.name || "Vehicle A";
-        const v2 = matched[1]?.name || "Vehicle B";
-        searchLabel = `Comparing ${v1} vs ${v2}`;
-        steps = [
-          {
-            name: "Analyzing comparative parameters",
-            sub: `Head-to-head comparison: ${v1} vs ${v2} on specifications & segment positioning`
-          },
-          {
-            name: "Querying dual records from tbl_features",
-            sub: `Fetching dimensions, ground clearance, ADAS & features for both models`
-          },
-          {
-            name: "Benchmarking metric deltas",
-            sub: `Calculating dimension variances, ground clearance deltas & feature parity`
-          },
-          {
-            name: "Generating comparative matrix",
-            sub: "Structuring side-by-side comparison table highlighting competitor differentiators"
-          }
-        ];
-      }
-      // 3. ADAS & Safety Suite
-      else if (isADAS) {
-        searchLabel = `Checking ADAS & safety package for ${targetLabel}`;
-        steps = [
-          {
-            name: "Analyzing safety & ADAS perimeter",
-            sub: `Target: ${targetLabel} | Scope: ADAS Level 1/2 suite & active safety equipment`
-          },
-          {
-            name: "Querying tbl_features (ADAS & Safety)",
-            sub: `Fetching Forward Collision Warning, Lane Keep Assist, Airbag count & ESC for ${targetLabel}`
-          },
-          {
-            name: "Auditing active safety suite",
-            sub: "Validating radar/camera architecture and standard vs optional safety equipment"
-          },
-          {
-            name: "Structuring safety specification",
-            sub: "Compiling verified ADAS feature checklist and safety equipment matrix"
-          }
-        ];
-      }
-      // 4. Sales & Wholesale Dispatches
-      else if (isSales) {
-        searchLabel = `Querying September 2026 sales for ${targetLabel}`;
-        steps = [
-          {
-            name: "Analyzing commercial volume inquiry",
-            sub: `Target: ${targetLabel} | Scope: September 2026 wholesale dispatch sales`
-          },
-          {
-            name: "Querying tbl_sales database",
-            sub: `Executing SELECT OEM, Vehicle, Segment, Sep26 FROM tbl_sales`
-          },
-          {
-            name: "Evaluating OEM wholesale dispatches",
-            sub: "Extracting official wholesale dispatch units and segment market distribution"
-          },
-          {
-            name: "Synthesizing market performance",
-            sub: "Reporting verified sales figures, segment ranking & market share"
-          }
-        ];
-      }
-      // 5. Seats & Interior Configuration
-      else if (isSeats) {
-        searchLabel = `Checking cabin seating layout for ${targetLabel}`;
-        steps = [
-          {
-            name: "Analyzing seating & interior configuration",
-            sub: `Target: ${targetLabel} | Attribute: Cabin seating capacity & row ergonomics`
-          },
-          {
-            name: "Querying tbl_features (Seats)",
-            sub: `Retrieving seat count, 2nd row split (40:60), ventilation & 3rd row availability for ${targetLabel}`
-          },
-          {
-            name: "Verifying cabin ergonomics",
-            sub: "Validating passenger capacity, backrest recline and bench configuration"
-          },
-          {
-            name: "Synthesizing interior confirmation",
-            sub: "Formulating verified seating capacity confirmation and row specifications"
-          }
-        ];
-      }
-      // 6. Dimensions & Specifications
-      else if (isSpecs) {
-        searchLabel = `Retrieving dimensions & specs for ${targetLabel}`;
-        steps = [
-          {
-            name: "Analyzing vehicle dimensions inquiry",
-            sub: `Target: ${targetLabel} | Attributes: Length, Width, Height, Clearance & Boot Space`
-          },
-          {
-            name: "Querying tbl_features (Specification)",
-            sub: `Retrieving unladen ground clearance, exterior dimensions & boot volume for ${targetLabel}`
-          },
-          {
-            name: "Validating segment measurements",
-            sub: "Cross-checking millimeter measurements against 38 Indian market benchmarks"
-          },
-          {
-            name: "Structuring technical specification",
-            sub: "Compiling verified showroom measurement table with exact values"
-          }
-        ];
-      }
-      // 7. Price & Variant Pricing
-      else if (isPrice) {
-        searchLabel = `Checking price range for ${targetLabel}`;
-        steps = [
-          {
-            name: "Analyzing showroom pricing inquiry",
-            sub: `Target: ${targetLabel} | Parameter: Showroom Price Range in KINR`
-          },
-          {
-            name: "Querying tbl_features (Price)",
-            sub: `Retrieving variant price bracket in thousand INR (KINR) for ${targetLabel}`
-          },
-          {
-            name: "Evaluating segment price competitiveness",
-            sub: "Benchmarking price span against direct competitive alternatives in segment"
-          },
-          {
-            name: "Structuring pricing guidance",
-            sub: "Compiling verified showroom price range in thousand INR (KINR)"
-          }
-        ];
-      }
-      // 8. Powertrain & Performance
-      else if (isPowertrain) {
-        searchLabel = `Checking powertrain & engine for ${targetLabel}`;
-        steps = [
-          {
-            name: "Analyzing powertrain & performance inquiry",
-            sub: `Target: ${targetLabel} | Scope: Engine displacement, power/torque & gearbox`
-          },
-          {
-            name: "Querying tbl_features (Powertrain)",
-            sub: `Fetching motor outputs, fuel types, transmission options & battery specs for ${targetLabel}`
-          },
-          {
-            name: "Auditing drivetrain specifications",
-            sub: "Validating performance output curves against showroom segment rivals"
-          },
-          {
-            name: "Structuring technical performance matrix",
-            sub: "Formatting engine options, horsepower, torque & transmission choices"
-          }
-        ];
-      }
-      // 9. Comfort, Technology & Equipment
-      else if (isComfort) {
-        searchLabel = `Checking technology & comfort equipment for ${targetLabel}`;
-        steps = [
-          {
-            name: "Analyzing equipment & comfort inquiry",
-            sub: `Target: ${targetLabel} | Perimeter: Comfort & Convenience / HMI equipment`
-          },
-          {
-            name: "Querying tbl_features (Comfort & HMI)",
-            sub: `Retrieving sunroof, infotainment screen size, wireless connectivity & audio package for ${targetLabel}`
-          },
-          {
-            name: "Evaluating showroom feature presence",
-            sub: "Validating standard vs optional equipment across model trim grades"
-          },
-          {
-            name: "Structuring equipment overview",
-            sub: "Compiling verified convenience & technology features table"
-          }
-        ];
-      }
-      // 10. General Automotive Fallback
-      else {
-        const summaryQ = userQuery.slice(0, 42) + (userQuery.length > 42 ? "..." : "");
-        searchLabel = "Analyzing inquiry";
-        steps = [
+      const summaryQ = (userQuery || "").trim().slice(0, 50) + (userQuery && userQuery.length > 50 ? "..." : "");
+      return {
+        initialSearchLabel: "Analyzing automotive inquiry...",
+        steps: [
           {
             name: "Understanding automotive inquiry",
-            sub: `Processing "${summaryQ}"`
+            sub: `Processing "${summaryQ || "inquiry"}"`
           },
           {
             name: "Querying db_imi database",
@@ -1629,10 +1364,8 @@
             name: "Synthesizing market intelligence",
             sub: "Formulating structured, verified guidance for showroom sales consultants"
           }
-        ];
-      }
-
-      return { steps, initialSearchLabel: searchLabel };
+        ]
+      };
     }
 
     // Creates single-line, transparent inline thought process (hidden/collapsed by default)
@@ -1648,8 +1381,8 @@
       const stepsData = dynamicInfo.steps;
 
       div.innerHTML = `
-        <!-- Single-Line Thought Process (Antigravity Style: Transparent, Collapsed by default) -->
-        <div class="inline-thought-container collapsed">
+        <!-- Single-Line Thought Process (Antigravity Style: Transparent, Collapsible) -->
+        <div class="inline-thought-container">
           <div class="inline-thought-header" onclick="this.closest('.inline-thought-container').classList.toggle('collapsed')">
             <span class="thought-chevron">▾</span>
             <span class="thought-live-spinner"></span>
@@ -1737,7 +1470,6 @@
         });
         thoughtSpinner.classList.add('done');
         thoughtLabel.textContent = 'Thought process (4 steps completed)';
-        thoughtContainer.classList.add('collapsed');
       }
 
       // Live SQL updater from server SSE (if available)
@@ -2003,14 +1735,28 @@
       }
     }
 
+    // Immediate microsecond abort on button pointerdown / click (0 ms latency)
+    [heroSendBtn, dockSendBtn].forEach(btn => {
+      btn.addEventListener('pointerdown', (e) => {
+        if (isStreaming) {
+          e.preventDefault();
+          e.stopPropagation();
+          abortCurrentQuery();
+        }
+      });
+      btn.addEventListener('click', (e) => {
+        if (isStreaming) {
+          e.preventDefault();
+          e.stopPropagation();
+          abortCurrentQuery();
+        }
+      });
+    });
+
     heroForm.addEventListener('submit', (e) => {
       e.preventDefault();
       if (isStreaming) {
-        if (activeAbortController) {
-          try { activeAbortController.abort(); } catch (_) {}
-          activeAbortController = null;
-        }
-        setStreamingState(false);
+        abortCurrentQuery();
         return;
       }
       const val = heroInput.value.trim();
@@ -2021,11 +1767,7 @@
     dockForm.addEventListener('submit', (e) => {
       e.preventDefault();
       if (isStreaming) {
-        if (activeAbortController) {
-          try { activeAbortController.abort(); } catch (_) {}
-          activeAbortController = null;
-        }
-        setStreamingState(false);
+        abortCurrentQuery();
         return;
       }
       const val = dockInput.value.trim();
