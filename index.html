@@ -1026,6 +1026,7 @@
     let threads = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
     let activeThreadId = threads[0]?.id || null;
     let activeAbortController = null;
+    let activeGreetingTimer = null;
     let isStreaming = false;
 
     const SEND_ICON_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
@@ -1057,6 +1058,10 @@
     }
 
     function abortCurrentQuery() {
+      if (activeGreetingTimer) {
+        clearTimeout(activeGreetingTimer);
+        activeGreetingTimer = null;
+      }
       if (activeAbortController) {
         try { activeAbortController.abort(); } catch (_) {}
         activeAbortController = null;
@@ -1610,32 +1615,38 @@
         ];
 
         // Give a brief moment for the greeting steps to animate, then stream response
-        setTimeout(async () => {
-          finishSteps();
-          for (const chunk of welcomeChunks) {
-            fullReply += chunk;
-            replyContent.innerHTML = renderMarkdown(fullReply) + '<span class="streaming-cursor"></span>';
-            chatList.scrollTop = chatList.scrollHeight;
-            await new Promise(r => setTimeout(r, 35));
+        activeGreetingTimer = setTimeout(async () => {
+          activeGreetingTimer = null;
+          try {
+            finishSteps();
+            for (const chunk of welcomeChunks) {
+              if (!isStreaming || activeAbortController?.signal?.aborted) {
+                break;
+              }
+              fullReply += chunk;
+              replyContent.innerHTML = renderMarkdown(fullReply) + '<span class="streaming-cursor"></span>';
+              chatList.scrollTop = chatList.scrollHeight;
+              await new Promise(r => setTimeout(r, 35));
+            }
+
+            replyContent.innerHTML = renderMarkdown(fullReply);
+            currentThread.messages.push({ role: "model", parts: [{ text: fullReply }] });
+            saveThreads();
+
+            const actions = document.createElement('div');
+            actions.className = 'msg-actions';
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'action-btn';
+            copyBtn.innerHTML = 'Copy';
+            copyBtn.onclick = () => copyToClipboard(fullReply, copyBtn);
+            actions.appendChild(copyBtn);
+            wrap.appendChild(actions);
+          } finally {
+            activeAbortController = null;
+            setStreamingState(false);
+            dockInput.value = '';
+            dockInput.focus();
           }
-
-          replyContent.innerHTML = renderMarkdown(fullReply);
-          currentThread.messages.push({ role: "model", parts: [{ text: fullReply }] });
-          saveThreads();
-
-          const actions = document.createElement('div');
-          actions.className = 'msg-actions';
-          const copyBtn = document.createElement('button');
-          copyBtn.className = 'action-btn';
-          copyBtn.innerHTML = 'Copy';
-          copyBtn.onclick = () => copyToClipboard(fullReply, copyBtn);
-          actions.appendChild(copyBtn);
-          wrap.appendChild(actions);
-
-          heroSendBtn.disabled = false;
-          dockSendBtn.disabled = false;
-          dockInput.value = '';
-          dockInput.focus();
         }, 600);
 
         return;
