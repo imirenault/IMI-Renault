@@ -1,5 +1,5 @@
-// IMI Copilot Service Worker - Version 2.3.1
-const CACHE_NAME = 'imi-copilot-cache-v2.3.4';
+// IMI Copilot Service Worker - Version 2.3.5
+const CACHE_NAME = 'imi-copilot-cache-v2.3.5';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -9,7 +9,9 @@ const ASSETS_TO_CACHE = [
   './Features.jpg',
   './Sales Figure.jpg',
   './Fuel Economy.jpg',
-  './icon.png'
+  './icon.png',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 // 1. Install Event: Cache essential assets and force immediate activation
